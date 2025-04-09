@@ -1,0 +1,160 @@
+/* for search button  */
+/* { */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 20px;
+    border: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10rem;
+    transition: all 0.02s;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgb(37, 37, 37);
+    z-index: 0;
+    box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .button:hover {
+    background: rgb(193, 228, 248);
+    color: rgb(33, 0, 85);
+  }
+  
+  .button:active {
+    transform: scale(0.97);
+  }
+  
+  .hoverEffect {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+  
+  .hoverEffect div {
+    background: rgb(222, 0, 75);
+    background: linear-gradient(
+      90deg,
+      rgba(222, 0, 75, 1) 0%,
+      rgba(191, 70, 255, 1) 49%,
+      rgba(0, 212, 255, 1) 100%
+    );
+    border-radius: 40rem;
+    width: 10rem;
+    height: 10rem;
+    transition: 0.4s;
+    filter: blur(20px);
+    animation: effect infinite 3s linear;
+    opacity: 0.5;
+  }
+  
+  .button:hover .hoverEffect div {
+    width: 8rem;
+    height: 8rem;
+  }
+  
+  @keyframes effect {
+    0% {
+      transform: rotate(0deg);
+    }
+  
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+/* } */
+
+
+  /* for search symbol  */
+  #search-symbol{
+    height: 20px;
+    width: 20px;
+  }
+
+  /* for search bar */
+  /* { */
+.input {
+  border: none;
+  outline: none;
+  border-radius: 18px;
+  padding: 10px 45px 10px 15px;
+  margin-right: 10px;
+  background-color: #def6fe;
+  box-shadow: inset 2px 5px 10px rgba(0,0,0,0.3);
+  transition: 300ms ease-in-out;
+}
+
+.input:focus {
+  background-color: white;
+  transform: scale(1.05);
+  box-shadow: 13px 13px 100px #969696,
+             -13px -13px 100px #ffffff;
+}
+/* } */
+
+#logo{
+  height: 45px;
+  margin-left: 10px;
+}
+
+.nav-button{
+  font-size: 17px;
+}
+
+.margin-bottom-15{
+  margin-bottom: 15px;
+}
+
+.signup-button{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+SUP{
+  color: red;
+}
+
+.heading{
+  text-align: center;
+}
+
+.question-list {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px;
+}
+
+.question-list h4{
+  margin: 0;
+  padding: 0;
+}
+
+.question-list a , .question-title{
+  font-size: 18px;
+  text-decoration: none;
+  color: #1c7194 !important;
+}
+
+.comment-wrapper{
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.my-questions{
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar-nav {
+  display: flex;
+  width: 100%;
+}
