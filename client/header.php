@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-section">
-  <div class="container" style="max-width: 1200px;">
+  <div class="container navbarone" style="max-width: 1235px;">
     <a class="navbar-brand" href="./"><img src="./public/logo.png" alt="" id="logo"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -73,7 +73,7 @@
     </div>
     <form class="d-flex">
       <input type="text" autocomplete="off" name="search" class="input" placeholder="search here...">
-      <button class="button">
+      <button class="button ">
         <img id="search-symbol" src="./public/search.png" alt="search">
         Search
         <div class="hoverEffect">

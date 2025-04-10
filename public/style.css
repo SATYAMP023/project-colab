@@ -124,6 +124,11 @@ SUP{
 
 .heading{
   text-align: center;
+  font-size: 3.5rem;
+  /* background-color: aquamarine; */
+  margin-top: 20px;
+  border-radius: 20px;
+  padding: 15px;
 }
 
 .question-list {
@@ -157,4 +162,59 @@ SUP{
 .navbar-nav {
   display: flex;
   width: 100%;
+}
+
+.navbar .nav-link {
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: #ffc107 !important;
+}
+
+.form-control:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+body{
+  /* background-color: black; */
+  background: url('bgimage.jpeg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.navbar-section{
+  border-radius: 35px;
+  margin-top: 20px;
+}
+
+.navbarone{
+  /* background-color: rgb(48, 48, 48); */
+  border-radius: 35px;
+}
+
+/* changes */
+
+.container-signup{
+  background-color: white;
+  border-radius: 30px;
+  margin-top: 10px;
+  margin-bottom: 40px;
+  width: 600px;
+  height: 670px;
+}
+
+#signup-form{
+  border-radius: 30px;
+  /* background-color: chartreuse; */
+  height: 554px;
+
+}
+
+.form-control{
+  border-radius: 10px;
+}
+
+.signup-button{
+  border-radius: 10px;
 }

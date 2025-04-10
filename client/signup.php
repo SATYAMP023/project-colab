@@ -1,38 +1,38 @@
-<div class="container">
+<div class="container container-signup">
     <h1 class="heading">signup</h1>
     <form method="POST" action="./server/requests.php" id="signup-form">
 
     <div class="row">
-      <div class="col-6 offset-sm-3 margin-bottom-15" >
+      <div class="col-10 offset-sm-1 margin-bottom-15" >
         <label for="username" class="form-label">User Name <SUp>*</SUp></label>
         <input type="text" name="username" class="form-control" id="username" placeholder="Enter Your name" required>
       </div>
       
-      <div class="col-6 offset-sm-3 margin-bottom-15">
+      <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="email" class="form-label">User Email <SUp>*</SUp></label>
         <input type="email" name="email" class="form-control" id="email" placeholder="Enter User Email" required>
         <small id="emailcorrectness" style="color: red; display: none;"></small>
       </div>
       
-      <div class="col-6 offset-sm-3 margin-bottom-15">
+      <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="password" class="form-label">Password <SUp>*</SUp></label>
         <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
         <small id="password-error" style="color: red; display: none;">Password must contain at least one uppercase letter, one number, and one special character.</small>
       </div>
 
-      <div class="col-6 offset-sm-3 margin-bottom-15">
+      <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="password" class="form-label">Confirm Your Password <SUp>*</SUp></label>
         <input type="password" name="c_password" class="form-control" id="c_password" placeholder="Confirm your password" required>
         <small id="confirm-password-error" style="color: red; display: none;">Passwords don't match.</small>
       </div>
       
-      <div class="col-6 offset-sm-3 margin-bottom-15">
+      <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="phone" class="form-label">Enter Your Phone Number <SUp>*</SUp></label>
         <input type="number" name="phone" class="form-control" id="phone-id" placeholder="Enter your phone number" required>
       </div>
 
-      <div class="col-6 offset-sm-3 margin-bottom-15">
-        <label for="User Type" class="form-label">Choose Your Profession</label>
+      <div class="col-10 offset-sm-1 margin-bottom-15">
+        <label for="User Type" class="form-label">Choose Your Profession <SUp>*</SUp></label>
         <select name="user_type" id="user_type" class="form-control">
           <option value="student">Student</option>
           <option value="faculty">Faculty/Mentors</option>
@@ -43,8 +43,8 @@
   
   <div class="signup-button">
     
-    <div class="col-2 offset-sm-3">
-      <button type="submit" name="signup" class="btn btn-primary">signup</button>
+    <div class="col-2 offset-sm-9">
+      <button type="submit" name="signup" class="btn btn-primary signup-button">signup</button>
     </div>
     
   </div>
