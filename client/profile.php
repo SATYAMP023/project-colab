@@ -22,7 +22,7 @@
       $profile_query->bind_param("i", $user_id);
       $profile_query->execute();
       $profile_result = $profile_query->get_result();
-      $profile_image = "./public/profile-user.png"; // Default image
+      $profile_image = "./public/profile-user.png";
 
       if ($profile_result->num_rows > 0) {
         $image_row = $profile_result->fetch_assoc();
@@ -41,7 +41,19 @@
             <input type="file" class="form-control" name="image" id="image">
           </div>
 
-          <button type="submit" class="btn btn-primary px-4">Upload Image</button>
+          <button type="submit" class="btn btn-primary px-4">
+            <?php
+            if ($profile_image != "./public/profile-user.png") {
+              ?>
+              Change Image
+            <?php
+            }else {
+            ?>
+              Upload Image
+            <?php
+            } 
+            ?>
+          </button>
         </form>
       </div>
 

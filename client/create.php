@@ -1,6 +1,6 @@
 <div class="container">
-    <h1 class="heading">Create New Project</h1>
-    <form method="POST" action="./server/requests.php">
+  <h1 class="heading">Create New Project</h1>
+  <form method="POST" action="./server/requests.php">
 
   <div class="col-6 offset-sm-3 margin-bottom-15">
     <label for="title" class="form-label">Title of Project</label>

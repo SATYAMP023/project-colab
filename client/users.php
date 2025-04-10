@@ -25,7 +25,7 @@
 
             $allProjectsByUser = [];
 
-            $query = "select * from users";
+            $query = "select * from users WHERE user_type = 'student'";
             $result = $conn->query($query);
             foreach($result as $row)
             {
@@ -60,7 +60,7 @@
 
                     echo "<div class='col-auto'>";
                         echo "<a href='#' data-toggle='tooltip' title='User: $username'>";
-                            echo "<span class='profile-button' data-user-id='$user_id' data-username='$username' data-projects='$userProjectsJson' data-image='$profile_image' style='cursor:pointer; margin-left: 10px; color: blue;'><img src='$profile_image' alt='Profile' style='width: 30px; height: 30px; border-radius: 50%;'></span>";
+                            echo "<span class='profile-button' data-user-id='$user_id' data-username='$name' data-projects='$userProjectsJson' data-image='$profile_image' style='cursor:pointer; margin-left: 10px; color: blue;'><img src='$profile_image' alt='Profile' style='width: 30px; height: 30px; border-radius: 50%;'></span>";
                         echo "</a>";
                     echo "</div>";
 

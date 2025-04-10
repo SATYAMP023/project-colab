@@ -56,68 +56,63 @@ if (!isset($_SESSION['user']['user_id'])) {
     const passwordError = document.getElementById('password-error');
     const confirmPasswordError = document.getElementById('confirm-password-error');
 
-    // Prevent copy, cut, and paste in password fields
     const passwordFields = document.querySelectorAll("input[type='password']");
     passwordFields.forEach(function(field) {
-        field.addEventListener("copy", function(e) {
-            e.preventDefault();
-            alert("Copying is not allowed!");
-        });
+      field.addEventListener("copy", function(e) {
+        e.preventDefault();
+        alert("Copying is not allowed!");
+      });
 
-        field.addEventListener("cut", function(e) {
-            e.preventDefault();
-            alert("Cutting is not allowed!");
-        });
+      field.addEventListener("cut", function(e) {
+        e.preventDefault();
+        alert("Cutting is not allowed!");
+      });
 
-        field.addEventListener("paste", function(e) {
-            e.preventDefault();
-            alert("Pasting is not allowed!");
-        });
+      field.addEventListener("paste", function(e) {
+        e.preventDefault();
+        alert("Pasting is not allowed!");
+      });
 
-        field.setAttribute("oncopy", "return false");
-        field.setAttribute("onpaste", "return false");
-        field.setAttribute("oncut", "return false");
+      field.setAttribute("oncopy", "return false");
+      field.setAttribute("onpaste", "return false");
+      field.setAttribute("oncut", "return false");
     });
 
-    // Password validation criteria
     function validatePassword(password) {
-        const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordPattern.test(password);
+      const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      return passwordPattern.test(password);
     }
 
-    // Confirm password match
     function confirmPasswordsMatch(password, confirmPassword) {
-        return password === confirmPassword;
+      return password === confirmPassword;
     }
 
     form.addEventListener('submit', function(e) {
-        let isValid = true;
+      let isValid = true;
 
-        // Validate password
-        if (!validatePassword(passwordField.value)) {
-            passwordError.style.display = 'block';
-            isValid = false;
-        } else {
-            passwordError.style.display = 'none';
-        }
+      if (!validatePassword(passwordField.value)) {
+        passwordError.style.display = 'block';
+        isValid = false;
+      } else {
+        passwordError.style.display = 'none';
+      }
 
-        // Validate confirm password
-        if (!confirmPasswordsMatch(passwordField.value, confirmPasswordField.value)) {
-            confirmPasswordError.style.display = 'block';
-            isValid = false;
-        } else {
-            confirmPasswordError.style.display = 'none';
-        }
+      if (!confirmPasswordsMatch(passwordField.value, confirmPasswordField.value)) {
+        confirmPasswordError.style.display = 'block';
+        isValid = false;
+      } else {
+        confirmPasswordError.style.display = 'none';
+      }
 
-        if (oldpasswordField.value === passwordField.value) {
-            confirmPasswordError.textContent = "New password must be different from the current password.";
-            confirmPasswordError.style.display = 'block';
-            isValid = false;
-        }
+      if (oldpasswordField.value === passwordField.value) {
+        confirmPasswordError.textContent = "New password must be different from the current password.";
+        confirmPasswordError.style.display = 'block';
+        isValid = false;
+      }
 
-        if (!isValid) {
-            e.preventDefault(); // Prevent form submission if validation fails
-        }
+      if (!isValid) {
+        e.preventDefault();
+      }
     });
-});
-  </script>
+  });
+</script>

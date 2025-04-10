@@ -10,10 +10,6 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
-
-
-
-
 function mailsender($R_email, $message){
     $mail = new PHPMailer(true);
     

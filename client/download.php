@@ -12,7 +12,6 @@ if (!isset($_GET['file_id'])) {
 
 $file_id = intval($_GET['file_id']);
 
-// Fetch file details from the database
 $query = $conn1->prepare("SELECT * FROM documents WHERE id = ?");
 $query->bind_param("i", $file_id);
 $query->execute();
@@ -25,12 +24,10 @@ if ($result->num_rows == 0) {
 $file = $result->fetch_assoc();
 $file_path = realpath(__DIR__ . "/../server/uploads/" . $file['filename']);
 
-// Check if file exists on server
 if (!file_exists($file_path)) {
     die("File not found on server.");
 }
 
-// Serve the file
 header('Content-Description: File Transfer');
 header('Content-Type: ' . $file['filetype']);
 header('Content-Disposition: attachment; filename="' . basename($file['filename']) . '"');

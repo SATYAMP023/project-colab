@@ -11,9 +11,9 @@
   <form method="POST" action="./server/requests.php" class="w-50 mx-auto" id="forgot-password">
 
     <div class="mb-3">
-        <label for="email" class="form-label fw-bold">User Email </label>
-        <input type="email" name="email" class="form-control" id="email" placeholder="Enter User Email" required>
-        <small id="emailcorrectness" style="color: red; display: none;"></small>
+      <label for="email" class="form-label fw-bold">User Email </label>
+      <input type="email" name="email" class="form-control" id="email" placeholder="Enter User Email" required>
+      <small id="emailcorrectness" style="color: red; display: none;"></small>
     </div>
 
     <div class="mb-3">
