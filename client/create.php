@@ -20,7 +20,7 @@
     ?>
   </div>
 
-  <div class="col-6 offset-sm-3">
+  <div class="col-6 offset-sm-8">
     <button type="submit" name="create" class="btn btn-primary">submit</button>
   </div>
 

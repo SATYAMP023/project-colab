@@ -14,6 +14,17 @@ session_start();
         <?php
         include('./client/header.php');
 
+        ?>
+        <hr>
+        <style>
+        hr {
+            border: none;
+            border-top: 10px solid white; 
+            margin: 5px 0; 
+        }
+    </style>
+        <?php
+
         if (isset($_SESSION['message'])) {
             echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
             unset($_SESSION['message']);

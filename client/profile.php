@@ -57,9 +57,9 @@
         </form>
       </div>
 
-      <h1 class="text-center mt-4 text-dark fw-semibold"><?php echo htmlspecialchars($username); ?></h1>
+      <h1 class="text-center mt-4 text-light fw-semibold"><?php echo htmlspecialchars($username); ?></h1>
 
-      <div class="mt-4 text-center">
+      <div class="mt-4 text-center text-light">
         <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
         <p><strong>Phone:</strong> <?php echo htmlspecialchars($phone); ?></p>
         <a href="index.php?change-password" class="btn btn-warning px-4 mt-3">Change Password</a>

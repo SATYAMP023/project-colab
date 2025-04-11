@@ -127,7 +127,6 @@ SUP{
   color: white;
   text-align: center;
   font-size: 3.5rem;
-  /* background-color: aquamarine; */
   margin-top: 20px;
   border-radius: 20px;
   padding: 15px;
@@ -137,6 +136,8 @@ SUP{
   border: 1px solid #ddd;
   padding: 15px;
   margin: 10px;
+  /* background-color: aquamarine; */
+  background: url('bg-project.gif') repeat center center fixed;
 }
 
 .question-list h4{
@@ -147,7 +148,7 @@ SUP{
 .question-list a , .question-title{
   font-size: 18px;
   text-decoration: none;
-  color: #1c7194 !important;
+  color: #ffffff !important;
 }
 
 .comment-wrapper{
@@ -188,7 +189,6 @@ body{
 .navbar-section{
   border-radius: 35px;
   margin-top: 20px;
-  background: url('./public/bgimage.jpeg') no-repeat center center fixed;
 }
 
 .navbarone{
@@ -215,7 +215,9 @@ body{
 }
 
 .form-control{
+  color: white;
   border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .signup-button{
@@ -226,11 +228,14 @@ body{
   color: white;
 }
 
+.btn{
+  margin-bottom: 40px;
+}
+
 
 
 /* buttons css */
 
-/* From Uiverse.io by kleenpulse */ 
 .btn {
   --border-color: linear-gradient(-45deg, #ffae00, #7e03aa, #00fffb);
   --border-width: 0.125em;
@@ -240,7 +245,6 @@ body{
   --color: #afffff;
   color: var(--color);
   cursor: pointer;
-  /* use position: relative; so that BG is only for .btn */
   position: relative;
   isolation: isolate;
   display: inline-grid;
@@ -251,12 +255,12 @@ body{
   text-transform: uppercase;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.6);
   clip-path: polygon(
-    /* Top-left */ 0% var(--curve-size),
+    0% var(--curve-size),
     var(--curve-size) 0,
-    /* top-right */ 100% 0,
+    100% 0,
     100% calc(100% - var(--curve-size)),
-    /* bottom-right 1 */ calc(100% - var(--curve-size)) 100%,
-    /* bottom-right 2 */ 0 100%
+    calc(100% - var(--curve-size)) 100%,
+    0 100%
   );
   transition: color 250ms;
 }
@@ -342,7 +346,7 @@ body{
   position: relative;
   padding: 1em 2em;
   border: none;
-  background-color: #212121;
+  background-color: #cccccc;
   font-family: "Roboto", Arial, "Segoe UI", sans-serif;
   font-size: 18px;
   font-weight: 500;
@@ -351,16 +355,15 @@ body{
   outline: none;
   z-index: 0;
 
-  /* Glowing effect on focus */
   transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .form-control:focus {
-  box-shadow: 0 0 12px #29dbbc, 0 0 20px #29dbbc;
+  box-shadow: 0 0 20px #ff3700, 0 0 25px #ff601b;
   background-color: #2a2a2a;
+  color: white;
 }
 
-/* Animated neon border */
 .form-control::before {
   content: "";
   position: absolute;
