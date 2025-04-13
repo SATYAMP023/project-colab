@@ -6,7 +6,7 @@ if (!isset($_SESSION['user']['user_id'])) {
 ?>
 
 <div class="container py-5">
-  <h2 class="text-center mb-4">Change Password</h2>
+  <h2 class="text-center mb-4 heading">Change Password</h2>
 
   <?php
     if (isset($_SESSION['message'])) {
@@ -18,32 +18,33 @@ if (!isset($_SESSION['user']['user_id'])) {
   <form method="POST" action="./server/requests.php" class="w-50 mx-auto" id="password-change">
     <input type="hidden" name="action" value="change_password">
     <input type="hidden" name="user_id" value="<?php echo $_SESSION['user']['user_id']; ?>">
-
-    <div class="mb-3">
-      <label class="form-label fw-bold">Current Password</label>
-      <input type="password" class="form-control" id="old_password" name="current_password" required>
+    <div class="row">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Current Password</label>
+        <input type="password" class="form-control" id="old_password" name="current_password" required>
+      </div>
+      
+      <div class="mb-3">
+        <label class="form-label fw-bold">New Password</label>
+        <input type="password" class="form-control" id="password" name="new_password" required>
+        <small id="password-error" style="color: red; display: none;">Password must contain at least one uppercase letter, one number, and one special character.</small>
+      </div>
+      
+      <div class="mb-3">
+        <label class="form-label fw-bold">Confirm New Password</label>
+        <input type="password" class="form-control" id="c_password" name="confirm_password" required>
+        <small id="confirm-password-error" style="color: red; display: none;">Passwords don't match.</small>
+        
+      </div>
+      
+      <div class="d-grid">
+        <button type="submit" name="update_password" class="btn btn-primary">Update Password</button>
+      </div>
+    </form>
+    
+    <div class="text-center mt-4">
+      <a href="index.php?profile=<?php echo $_SESSION['user']['user_id']; ?>" class="btn btn-secondary">Back to Profile</a>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-bold">New Password</label>
-      <input type="password" class="form-control" id="password" name="new_password" required>
-      <small id="password-error" style="color: red; display: none;">Password must contain at least one uppercase letter, one number, and one special character.</small>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label fw-bold">Confirm New Password</label>
-      <input type="password" class="form-control" id="c_password" name="confirm_password" required>
-      <small id="confirm-password-error" style="color: red; display: none;">Passwords don't match.</small>
-
-    </div>
-
-    <div class="d-grid">
-      <button type="submit" name="update_password" class="btn btn-primary">Update Password</button>
-    </div>
-  </form>
-
-  <div class="text-center mt-4">
-    <a href="index.php?profile=<?php echo $_SESSION['user']['user_id']; ?>" class="btn btn-secondary">Back to Profile</a>
   </div>
 </div>
 

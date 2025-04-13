@@ -8,22 +8,22 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
         <li class="nav-item">
-          <a class="nav-link active nav-button" href="./">Home</a>
+          <a class="nav-link active nav-button" style="color: white;" href="./">Home</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link active nav-button" href="?latest=true">Latest-Projects</a>
+          <a class="nav-link active nav-button" style="color: white;" href="?latest=true">Latest-Projects</a>
         </li>
         
         <?php
         if(!isset($_SESSION['user_status']['status'])){
         ?>
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?signup=true">Signup</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?signup=true">Signup</a>
           </li>
         
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?login=true">Login</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?login=true">Login</a>
           </li>
         <?php } ?>
 
@@ -35,36 +35,36 @@
         if($user_type === "student"){
         ?>
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?u-id=<?php echo $_SESSION['user']['user_id'] ?>">My-Projects</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?u-id=<?php echo $_SESSION['user']['user_id'] ?>">My-Projects</a>
           </li>
           
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?create=true">Create-Project</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?create=true">Create-Project</a>
           </li>
         <?php  
         }
         if($user_type === "com-rep"){
         ?>
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?user=true">Users</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?user=true">Users</a>
           </li>
           
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?addjob=true">Add-Jobs</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?addjob=true">Add-Jobs</a>
           </li>
         <?php
         }
         if($user_type === "com-rep" || $user_type ==="student"){
         ?>
           <li class="nav-item">
-            <a class="nav-link active nav-button" href="?alljob=true">All-Jobs</a>
+            <a class="nav-link active nav-button" style="color: white;" href="?alljob=true">All-Jobs</a>
           </li>
         <?php
         }
         ?>
 
         <li class="nav-item">
-          <a class="nav-link active nav-button" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($_SESSION['user']['username'])?>) <sup> <?php echo ucfirst($_SESSION['user']['user_type']) ?> </sup></a>
+          <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($_SESSION['user']['username'])?>) <sup> <?php echo ucfirst($_SESSION['user']['user_type']) ?> </sup></a>
         </li>
 
       <?php } ?>

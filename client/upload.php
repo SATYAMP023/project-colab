@@ -33,7 +33,7 @@ $result = $conn1->query($sql);
                             <td><?php echo $row['filename']; ?></td>
                             <td><?php echo $row['filesize']; ?> bytes</td>
                             <td><?php echo $row['filetype']; ?></td>
-                            <td> <a href="client/view.php?file_id=<?php echo $row['id']; ?>" class="btn btn-info" target="_blank">View</a> </td>
+                            <td> <a href="client/view.php?file_id=<?php echo $row['id']; ?>" class="btn btn-primary" target="_blank">View</a> </td>
                             <td>
                             <?php if (isset($_SESSION['user']['user_id'])) { ?>
                                 <a href="client/download.php?file_id=<?php echo $row['id']; ?>" class="btn btn-primary" download>Download</a>

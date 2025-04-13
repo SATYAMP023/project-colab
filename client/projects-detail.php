@@ -13,7 +13,7 @@
             $result = $conn->query($query);
             $row = $result->fetch_assoc();
             $cid = $row['category_id'];
-            echo "<h4 class='margin-bottom-15 project-title'>Project: ".ucfirst($row['title'])."</h4>
+            echo "<h3 class='margin-bottom-15 project-title'>Project: ".ucfirst($row['title'])."</h3>
             <p class='margin-bottom-15'>".$row['description']."</p>";
             include("upload.php");
             ?>
@@ -29,7 +29,7 @@
             $categoryquery = "select category from category where id = $cid";
             $categoryresult = $conn->query($categoryquery);
             $categoryrow = $categoryresult->fetch_assoc();
-            echo "<h1 class='heading'>".ucfirst($categoryrow['category'])."</h1>";
+            echo "<h3 class='heading2'>".ucfirst($categoryrow['category'])."</h3>";
 
             $query = "select * from projects where category_id = $cid and id!=$pid";
             $result = $conn->query($query);
@@ -37,7 +37,7 @@
             {
                 $title = ucfirst($row['title']);
                 $id = $row['id'];
-                echo "<div class='row project-list'>
+                echo "<div class='row question-list'>
                 <h4> <a href='?p-id=$id'> $title </a> </h4>
                 </div>";
             }
@@ -47,7 +47,7 @@
 </div>
 <div style="margin-top: 20px; margin-bottom: 20px;" class="container">
     <div class="row">
-        <div class="col-8">
+        <div class="col-7">
             <div class="offset-sm-1">
                 <h5>Comments:</h5>
                 <?php
@@ -56,25 +56,38 @@
                 if(isset($_SESSION['user']['user_id'])){
                     $userid2 = $_SESSION['user']['user_id'];
                 }
-                foreach($result as $row){
-                    $comment = $row['comment'];
-                    $id = $row['id'];
-                    $userid1 = $row['user_id'];
-
-                    echo "<div class='row align-items-center mb-2'> 
+                if ($result->num_rows > 0) {
+                    foreach($result as $row){
+                        $comment = $row['comment'];
+                        $id = $row['id'];
+                        $userid1 = $row['user_id'];
+                        
+                        echo "<div class='row align-items-center mb-2'> 
                         <div class='col-8'>
-                            <p class='comment-wrapper'>$comment</p>
+                        <p class='comment-wrapper'>$comment</p>
                         </div>";
-
+                        
                         if (isset($_SESSION['user']['user_id']) && $userid1 == $userid2) {
                             echo "<div class='col-4 text-end'>
-                                <a href='./server/requests.php?deletecomment=$id' class='btn btn-danger btn-sm'>Delete</a>
+                            <a href='./server/requests.php?deletecomment=$id' class='btn btn-danger btn-sm'>Delete</a>
                             </div>";
                         }
-                    echo "</div>";
+                        echo "</div>";
+                    }
                 }
+                else {
+                    echo "<div class='row align-items-center mb-2'> 
+                        <div class='col-8'>
+                        <p class='comment-wrapper'>No Comments Posted Yet...</p>
+                        </div>
+                    </div>";
+                }
+                
                 ?>    
             </div>
+        </div>
+        <div class="col-1">
+
         </div>
         <div class="col-4">
         <h5>Leave your Comment here:</h5>
