@@ -36,10 +36,7 @@ function mailsender($R_email, $message){
 }
 $count = isset($_SESSION['otp_attempts']) ? $_SESSION['otp_attempts'] : 0;
 
-if(isset($_POST["signup"])){
-
-    $query_del = $conn->prepare("delete from `users` where status = '0' ");
-    $result_del = $query_del->execute();
+if (isset($_POST["signup"])) {
 
     $username = $_POST["username"];
     $email = $_POST["email"];
@@ -48,117 +45,106 @@ if(isset($_POST["signup"])){
     $phone = $_POST['phone'];
     $usertype = $_POST["user_type"];
 
-    if($username!=NULL && $email!=NULL){
-
-        $sql = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
-        $sql->bind_param("s", $email);
-        $sql->execute();
-        $emailcheck = $sql->get_result();
-        if ($emailcheck->num_rows > 0) {
-            $_SESSION['message'] = "Email is already registered.";
-            header("Location: /PROJECT-COLAB/?signup=true");
-            exit;
-        }
-        else{
-            if($password!=NULL && $phone!=NULL){
-                
-                if ($password === $c_password) {
-                    
-                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    
-                    $user = $conn->prepare("Insert into `users`
-                    (`id`,`username`,`email`,`password`,`user_type`,`phone`,`otp-send-time`)
-                    values(NULL,'$username','$email','$hashed_password','$usertype','$phone',NOW());
-                    ");
-                    
-                    $result = $user->execute();
-                    $user->insert_id;
-                    if($result){
-                        $_SESSION['user'] = ['username' => $username,'email'=> $email,'user_id'=>$user->insert_id,'user_type' => $usertype];
-                    }else{
-                        echo("ERROR IN REGISTRATION TRY AGAIN");
-                        exit;
-                    }
-                    
-                    $randomNumber = rand(100000, 999999);
-                    $_SESSION['user']['otp'] = $randomNumber;
-                    $_SESSION['user']['email'] = $email;
-                    
-                    $message = "your OTP verification code for Project-Colab is :". $randomNumber;
-                    mailsender($email, $message);
-                    header("Location: ../client/verify.php");
-                    exit;   
-                    
-                }
-                else {
-                    echo("Password does'nt match please try again");
-                    header("Location: /PROJECT-COLAB/?signup=true");
-                    exit;
-                }
-            }
-            else {
-                echo("please fill all credentials");
-                header("Location: /PROJECT-COLAB/?signup=true");
-                exit;
-            }
-        }
-    }
-    else {
-        echo("please fill all credentials");
+    // Error 1: Not checking if inputs are empty before proceeding
+    if (empty($username) || empty($email) || empty($password) || empty($c_password) || empty($phone)) {
+        $_SESSION['message'] = "Please fill all the credentials.";
         header("Location: /PROJECT-COLAB/?signup=true");
         exit;
     }
+
+    // Check if email already exists
+    $sql = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
+    $sql->bind_param("s", $email);
+    $sql->execute();
+    $emailcheck = $sql->get_result();
+
+    if ($emailcheck->num_rows > 0) {
+        $_SESSION['message'] = "Email is already registered.";
+        header("Location: /PROJECT-COLAB/?signup=true");
+        exit;
+    }
+
+    if ($password !== $c_password) {
+        $_SESSION['message'] = "Passwords do not match. Please try again.";
+        header("Location: /PROJECT-COLAB/?signup=true");
+        exit;
+    }
+
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $otp = rand(100000, 999999); // Generate OTP
+
+    // Store data temporarily in session
+    $_SESSION['user_signup_credential'] = [
+        'username' => $username,
+        'email' => $email,
+        'password' => $hashed_password,
+        'user_type' => $usertype,
+        'phone' => $phone,
+        'otp' => $otp,
+        'otp_send_time' => time()
+    ];
+
+    $message = "Your OTP verification code for Project-Colab is: " . $otp;
+    mailsender($email, $message); // Assume mailsender is defined elsewhere
+
+    header("Location: ../client/verify.php");
+    exit;
 }
 
-else if(isset($_POST["otp-ver"])){
+else if (isset($_POST["otp-ver"])) {
 
-    if (!isset($_SESSION['user'])) {
-        echo "Session expired. Please try again.";
-        header("Location: /PROJECT-COLAB");
+    if (!isset($_SESSION['user_signup_credential'])) {
+        $_SESSION['message'] = "Session expired. Please try again.";
+        header("Location: /PROJECT-COLAB?signup=true");
         exit;
     }
 
     $c_otp = $_POST['otp'];
-    $otp = $_SESSION['user']['otp'];
-    $id = $_SESSION['user']['user_id'];
-    
-    if ($c_otp == $otp) {
-        
-        $query = "UPDATE `users`
-        SET status = '1'
-        WHERE id = $id;";
-        $result = $conn->query($query);
+    $stored = $_SESSION['user_signup_credential'];
 
-        if($result){
+    if ($c_otp == $stored['otp']) {
+
+        // Error 2: SQL Injection risk due to interpolated variables in query
+        $stmt = $conn->prepare("INSERT INTO `users` (`username`, `email`, `password`, `user_type`, `phone`, `otp-send-time`) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt->bind_param("sssss", $stored['username'], $stored['email'], $stored['password'], $stored['user_type'], $stored['phone']);
+
+        if ($stmt->execute()) {
+            $user_id = $conn->insert_id;
+
+            $_SESSION['user'] = [
+                'username' => $stored['username'],
+                'email' => $stored['email'],
+                'user_id' => $user_id,
+                'user_type' => $stored['user_type']
+            ];
             $_SESSION['user_status']['status'] = '1';
-            unset($_SESSION['user']['otp']);
-            unset($_SESSION['user']['email']);
-            
-            $_SESSION['otp_attempts'] = 0;
-            
             $_SESSION['message'] = "Registration successful.";
+
+            unset($_SESSION['user_signup_credential']); // Clear session
+
             header("Location: /PROJECT-COLAB");
             exit;
-        }else{
-            echo("NOT REGISTERED TRY AGAIN");
+        } else {
+            $_SESSION['message'] = "Error in registration. Try again.";
+            header("Location: /PROJECT-COLAB/?signup=true");
+            exit;
         }
-        
-    }
-    else {
-        $count++;
-        $_SESSION['otp_attempts'] = $count;
 
-        if ($count >= 3) {
-            $_SESSION['otp_attempts'] = 0;
-
+    } else {
+        $_SESSION['otp_attempts'] = isset($_SESSION['otp_attempts']) ? $_SESSION['otp_attempts'] + 1 : 1;
+    
+        if ($_SESSION['otp_attempts'] >= 3) {
             session_unset();
             session_destroy();
-            header("Location: /PROJECT-COLAB");            
+            $_SESSION['message'] = "OTP incorrect. You have Reached Attempt maximum limit try again";
+            header("Location: /PROJECT-COLAB/?signup=true");
             exit;
         } else {
-            echo '<script>alert("OTP incorrect. Please try again.");</script>';
+            $_SESSION['message'] = "OTP incorrect. Attempt {$_SESSION['otp_attempts']} of 3.";
+            header("Location: /PROJECT-COLAB/client/verify.php");
+            exit;
         }
-    }
+    }    
 }
 
 else if(isset($_POST["login"])){
@@ -384,8 +370,8 @@ if(isset($_POST["update_password"])){
 else if(isset($_POST["otp-verpc"])){
 
     if (!isset($_SESSION['user'])) {
-        echo "Session expired. Please try again.";
-        header("Location: /PROJECT-COLAB");
+        $_SESSION['message'] = "Session expired. Please try again.";
+        header("Location: /PROJECT-COLAB?signup=true");
         exit;
     }
 
@@ -402,7 +388,6 @@ else if(isset($_POST["otp-verpc"])){
 
         if($result){
             unset($_SESSION['user']['otp']);
-            unset($_SESSION['user']['email']);
             
             $_SESSION['otp_attempts'] = 0;
             
@@ -410,20 +395,24 @@ else if(isset($_POST["otp-verpc"])){
             header("Location: /PROJECT-COLAB");
             exit;
         }else{
-            echo("Password Not Updated TRY AGAIN");
+            $_SESSION['message'] = "Password Not Updated TRY AGAIN";
+            header("Location: /PROJECT-COLAB/index.php?change-password");
+            exit;
         }
         
     }
     else {
-        $count++;
-        $_SESSION['otp_attempts'] = $count;
+        $_SESSION['otp_attempts'] = isset($_SESSION['otp_attempts']) ? $_SESSION['otp_attempts'] + 1 : 1;
 
         if ($count >= 3) {
             $_SESSION['otp_attempts'] = 0;
+            $_SESSION['message'] = "OTP incorrect. You have Reached Attempt maximum limit try again";
             header("Location: ../index.php");            
             exit;
         } else {
-            echo '<script>alert("OTP incorrect. Please try again.");</script>';
+            $_SESSION['message'] = "OTP incorrect. Attempt {$_SESSION['otp_attempts']} of 3.";
+            header("Location: /PROJECT-COLAB/client/verify.php");
+            exit;
         }
     }
 }

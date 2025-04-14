@@ -1,4 +1,10 @@
 <div class="container" id="cont">
+    <?php
+    if (isset($_SESSION['message'])) {
+        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        unset($_SESSION['message']);
+    }
+    ?>
     <div class="row">
         <div class="col-8">
             <h1 class="heading">Projects</h1>
@@ -9,7 +15,7 @@
             top: 20%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: white;
+            background-color: black;
             padding: 20px;
             border: 1px solid #ccc;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);

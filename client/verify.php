@@ -3,6 +3,13 @@ include('commonfiles.php');
 ?>
 
   <div class="container">
+    <?php
+    session_start();
+    if (isset($_SESSION['message'])) {
+      echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+      unset($_SESSION['message']);
+    }
+    ?>
     <h1 class="heading">OTP Verification</h1>
     <form method="POST" action="../server/requests.php">
       
@@ -18,8 +25,19 @@ include('commonfiles.php');
           <button type="submit" name="otp-ver" class="btn btn-primary">Submit</button>
         </div>
       </div>
+
       
       <style>
+        .custom-alert {
+          background-color: #28a745;
+          color: white;
+          text-align: center;
+          font-weight: bold;
+          border-radius: 10px;
+          padding: 10px;
+          margin-bottom: 20px;
+        }
+
         .heading {
           text-align: center;
         }
@@ -39,7 +57,7 @@ include('commonfiles.php');
           margin-bottom: 15px;
           
         }
-
+        
         .btn {
           --border-color: linear-gradient(-45deg, #ffae00, #7e03aa, #00fffb);
           --border-width: 0.125em;
@@ -65,16 +83,16 @@ include('commonfiles.php');
             100% calc(100% - var(--curve-size)),
             calc(100% - var(--curve-size)) 100%,
             0 100%
-          );
-          transition: color 250ms;
-        }
-        
-
-        .btn::after,
-        .btn::before {
-          content: "";
-          position: absolute;
-          inset: 0;
+            );
+            transition: color 250ms;
+          }
+          
+          
+          .btn::after,
+          .btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
         }
 
         .btn::before {
@@ -131,10 +149,10 @@ include('commonfiles.php');
             /* bottom-right 2 */
             calc(100% - calc(var(--curve-size) + var(--border-width) * 0.5))
             calc(100% - var(--border-width))
-          );
+            );
           transition: 200ms;
         }
-
+        
         .btn:where(:hover, :focus) {
           color: #fff;
         }
@@ -193,12 +211,18 @@ include('commonfiles.php');
         .form-control:hover::before {
           animation-play-state: running;
         }
-
+        
         @keyframes rotate-hue {
           to {
             filter: hue-rotate(360deg);
           }
         }
       </style>
+      <script>
+        setTimeout(() => {
+          const alert = document.querySelector('.alert-success');
+          if (alert) alert.style.display = 'none';
+        }, 3000);
+      </script>
     </form>
   </div>

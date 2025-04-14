@@ -1,7 +1,16 @@
 
-<?php include('commonfiles.php') ?>
+<?php 
+include('commonfiles.php');
+?>
 
 <div class="container">
+  <?php
+  session_start();
+  if (isset($_SESSION['message'])) {
+    echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+    unset($_SESSION['message']);
+  }
+  ?>
   <h1 class="heading">OTP Verification to Change Your Old Password</h1>
   <form method="POST" action="../server/requests.php">
 

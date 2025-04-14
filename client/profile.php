@@ -1,7 +1,6 @@
 <div class="container py-5">
 
   <?php
-
     if (isset($_SESSION['message'])) {
       echo '<div class="alert alert-info text-center">' . $_SESSION['message'] . '</div>';
       unset($_SESSION['message']);
@@ -37,7 +36,7 @@
           <input type="hidden" name="user_id" value="<?php echo $user_id ?>">
 
           <div class="mb-2 w-50 mx-auto">
-            <label for="image" class="form-label fw-bold">Select Image</label>
+            <label for="image" class="form-label fw-bold" style="color: white;">Select Image</label>
             <input type="file" class="form-control" name="image" id="image">
           </div>
 

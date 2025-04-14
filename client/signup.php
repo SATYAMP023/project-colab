@@ -1,4 +1,10 @@
 <div class="container container-signup">
+<?php
+if (isset($_SESSION['message'])) {
+  echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+  unset($_SESSION['message']);
+}
+?>
     <h1 class="heading">signup</h1>
     <form method="POST" action="./server/requests.php" id="signup-form">
 

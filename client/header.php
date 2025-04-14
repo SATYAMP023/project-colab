@@ -31,43 +31,43 @@
         if(isset($_SESSION['user_status']['status'])){
           $user_type = $_SESSION['user']['user_type'];
         ?>
-        <?php
-        if($user_type === "student"){
-        ?>
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="?u-id=<?php echo $_SESSION['user']['user_id'] ?>">My-Projects</a>
-          </li>
+          <?php
+          if($user_type === "student"){
+          ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?u-id=<?php echo $_SESSION['user']['user_id'] ?>">My-Projects</a>
+            </li>
           
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="?create=true">Create-Project</a>
-          </li>
-        <?php  
-        }
-        if($user_type === "com-rep"){
-        ?>
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="?user=true">Users</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?create=true">Create-Project</a>
+            </li>
+          <?php  
+          }
+          if($user_type === "com-rep"){
+          ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?user=true">Users</a>
+            </li>
           
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="?addjob=true">Add-Jobs</a>
-          </li>
-        <?php
-        }
-        if($user_type === "com-rep" || $user_type ==="student"){
-        ?>
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="?alljob=true">All-Jobs</a>
-          </li>
-        <?php
-        }
-        ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?addjob=true">Add-Jobs</a>
+            </li>
+          <?php
+          }
+          if($user_type === "com-rep" || $user_type ==="student"){
+          ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?alljob=true">All-Jobs</a>
+            </li>
+          <?php
+          }
+          ?>
 
-        <li class="nav-item">
-          <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($_SESSION['user']['username'])?>) <sup> <?php echo ucfirst($_SESSION['user']['user_type']) ?> </sup></a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($_SESSION['user']['username'])?>) <sup> <?php echo ucfirst($_SESSION['user']['user_type']) ?> </sup></a>
+          </li>
 
-      <?php } ?>
+        <?php } ?>
 
       </ul>
     </div>

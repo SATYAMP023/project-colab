@@ -1,4 +1,11 @@
 <div class="container" id="cont">
+    <?php
+    session_start();
+    if (isset($_SESSION['message'])) {
+        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        unset($_SESSION['message']);
+    }
+    ?>
     <div class="row">
         <div class="col-8">
             <h1 class="heading">Users</h1>
