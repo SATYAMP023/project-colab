@@ -1,6 +1,5 @@
 <div class="container" id="cont">
     <?php
-    session_start();
     if (isset($_SESSION['message'])) {
         echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
         unset($_SESSION['message']);
@@ -16,7 +15,7 @@
             top: 20%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: white;
+            background-color: black;
             padding: 20px;
             border: 1px solid #ccc;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -32,8 +31,23 @@
 
             $allProjectsByUser = [];
 
-            $query = "select * from users WHERE user_type = 'student'";
-            $result = $conn->query($query);
+            if (isset($_GET['userskill'])) {
+                $skill = trim($_GET['userskill']);
+                $query = $conn->prepare("
+                    SELECT users.* 
+                    FROM users 
+                    JOIN skills ON users.id = skills.user_id 
+                    WHERE LOWER(skills.skill) LIKE CONCAT('%', LOWER(?), '%') 
+                    AND users.user_type = 'student'
+                ");
+                $query->bind_param("s", $skill);
+
+                $query->execute();
+                $result = $query->get_result();
+            } else {
+                $result = $conn->query("select * from users WHERE user_type = 'student'");
+            }
+
             foreach($result as $row)
             {
                 $name = ucfirst($row['username']);
@@ -63,7 +77,7 @@
 
 
 
-                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px;'>";
+                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 30px;'>";
 
                     echo "<div class='col-auto'>";
                         echo "<a href='#' data-toggle='tooltip' title='User: $username'>";
@@ -83,6 +97,13 @@
             }
             ?>
         </div>
+
+        <div class="col-4">
+        <?php
+            include('skill-list-user.php');
+        ?>
+        </div>
+
     </div>
 </div>
 

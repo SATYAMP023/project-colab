@@ -81,7 +81,7 @@
 
                 $userProjectsJson = htmlspecialchars(json_encode($allProjectsByUser[$user_id]), ENT_QUOTES, 'UTF-8');
 
-                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px;'>";
+                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 20px;'>";
 
                     echo "<div class='col-auto'>";
                         echo "<a href='#' data-toggle='tooltip' title='User: $username'>";

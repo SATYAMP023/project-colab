@@ -63,9 +63,14 @@
           }
           ?>
 
-          <li class="nav-item">
-            <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($_SESSION['user']['username'])?>) <sup> <?php echo ucfirst($_SESSION['user']['user_type']) ?> </sup></a>
-          </li>
+            <li class="nav-item">
+            <?php
+              $username_parts = explode(' ', $_SESSION['user']['username']);
+              $first_name = $username_parts[0];
+              ?>
+              <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($first_name) ?>) <sup><?php echo ucfirst($_SESSION['user']['user_type']) ?></sup></a>
+            </li>
+
 
         <?php } ?>
 

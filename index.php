@@ -57,40 +57,55 @@ session_start();
             $pid = $_GET['p-id'];
             include ('./client/projects-detail.php');
         }
-
+        
         else if(isset($_GET['c-id'])){
             $cid = $_GET['c-id'];
             include ('./client/projects.php');
         }
-
+        
         else if(isset($_GET['search'])){
             $search = $_GET['search'];
             include ('./client/projects.php');
         }
-
+        
         else if(isset($_GET['profile'])){
             $user_id = $_GET['profile'];
             include ('./client/profile.php');
         }
-
+        
         else if(isset($_GET['change-password'])) {
             include('./client/change-password.php');
         }
-
+        
         else if(isset($_GET['forgot-password'])) {
             include('./client/forgot_password.php');
         }
-
+        
         else if(isset($_GET['user'])){
             include ('./client/users.php');
         }
-
+        
         else if(isset($_GET['addjob'])){
             include ('./client/jobs.php');
         }
-    
+        
         else if(isset($_GET['alljob'])){
             include ('./client/showjobs.php');
+        }
+        
+        else if(isset($_GET['job-id'])){
+            $job_id = $_GET['job-id'];
+            include ('./client/job-form.php');
+        }
+
+        else if(isset($_GET['skill'])){
+            $skill = $_GET['skill'];
+            include ('./client/showjobs.php');
+        }
+        
+        else if(isset($_GET['userskill'])){
+            $skill = $_GET['userskill'];
+            include ('./client/users.php');
         }
 
         else {
@@ -98,5 +113,5 @@ session_start();
         }
         ?>
 
-    </body>
+</body>
 </html>

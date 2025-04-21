@@ -10,11 +10,12 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
-function mailsender($R_email, $message){
+function mailsender($R_email, $message, $subject){
     $mail = new PHPMailer(true);
     
     try{
-        
+    
+
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
@@ -25,7 +26,7 @@ function mailsender($R_email, $message){
         $mail->setFrom('satyamofficialcuraj@gmail.com','Project Colab');
         $mail->addAddress($R_email);
         $mail->isHTML(true);
-        $mail->Subject = $_POST['otp'];
+        $mail->Subject = $subject;
         $mail->Body = $message;
         
         $mail->send();
@@ -85,7 +86,8 @@ if (isset($_POST["signup"])) {
     ];
 
     $message = "Your OTP verification code for Project-Colab is: " . $otp;
-    mailsender($email, $message); // Assume mailsender is defined elsewhere
+    $subject = "Registration otp verification";
+    mailsender($email, $message, $subject); 
 
     header("Location: ../client/verify.php");
     exit;
@@ -178,10 +180,14 @@ else if(isset($_POST["login"])){
             header("location: /PROJECT-COLAB");
             exit;
         } else {
-            echo "Incorrect password. Please try again.";
+            $_SESSION['message'] = "Incorrect password. Please try again.";
+            header("location: /PROJECT-COLAB/?login=true");
+            exit;
         }
     } else {
-        echo "No user found with that email. Please try again.";
+        $_SESSION['message'] = "No user found with that email. Please try again.";
+        header("location: /PROJECT-COLAB/?login=true");
+        exit;
     }
 }
 
@@ -358,7 +364,8 @@ if(isset($_POST["update_password"])){
         $_SESSION['user']['new_pass'] = $hash_password;
                    
         $message = "your OTP verification code for Project-Colab Password change is :". $randomNumber;
-        mailsender($email, $message);
+        $subject = "Update Password Verification";
+        mailsender($email, $message, $subject);
         header("Location: ../client/verifypc.php");
         exit;
     } else {
@@ -440,7 +447,8 @@ if(isset($_POST["update_forget_password"])){
         ];
                    
         $message = "your OTP verification code for Project-Colab Forgot Password is :". $randomNumber;
-        mailsender($email, $message);
+        $subject = "Forget Password Verification";
+        mailsender($email, $message, $subject);
         header("Location: ../client/verifypc.php");
         exit;
     } else {
@@ -516,7 +524,7 @@ else if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
     }
 }
 
-else if(isset($_POST["createjob"])){
+else if (isset($_POST["createjob"])) {
     $title = $_POST["title"];
     $companyname = $_POST["companyname"];
     $description = $_POST["description"];
@@ -524,20 +532,330 @@ else if(isset($_POST["createjob"])){
     $category_id = $_POST["category"];
     $user_id = $_SESSION["user"]["user_id"];
 
-        $project = $conn->prepare("Insert into `jobs`
-        (`id`,`title`,`companyname`,`description`,`skills`,`category_id`,`user_id`)
-        values(NULL,'$title','$companyname','$description','$skills','$category_id','$user_id');
-        ");
+    $upload_dir = "job-description/";
+    $hasFile = isset($_FILES["job-description"]) && $_FILES["job-description"]["error"] == 0;
 
-        $result = $project->execute();
-        if($result){
-            echo("Your Job Posted");
-            header("location: /PROJECT-COLAB");
-        }else{
-            echo("Job Not Posted");
+    // Insert job first
+    $project = $conn->prepare("INSERT INTO `jobs` (`id`, `title`, `companyname`, `description`, `skills`, `category_id`, `user_id`) VALUES (NULL, ?, ?, ?, ?, ?, ?)");
+    $project->bind_param("ssssii", $title, $companyname, $description, $skills, $category_id, $user_id);
+    $jobInserted = $project->execute();
+
+    if ($jobInserted) {
+        $job_id = $project->insert_id;
+
+        if ($hasFile) {
+            $file = $_FILES['job-description'];
+            $filename = $file['name'];
+            $filesize = $file['size'];
+            $filetype = $file['type'];
+
+            $allowed_extensions = ['pdf', 'jpeg', 'jpg'];
+            $allowed_mime_types = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/pjpeg'];
+
+            $max_filesize = 5 * 1024 * 1024; // 5MB
+            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+            if (!in_array($extension, $allowed_extensions) || !in_array($filetype, $allowed_mime_types)) {
+                echo "Error: Only PDF, JPG, and JPEG files are allowed.";
+                exit;
+            }
+
+            if ($filesize > $max_filesize) {
+                echo "Error: File size exceeds the 5MB limit.";
+                exit;
+            }
+
+            $new_filename = "job_" . $job_id . "." . $extension;
+            $target_file = $upload_dir . $new_filename;
+
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                // Save to job-description table
+                $query = $conn1->prepare("INSERT INTO `job-description` (`id`, `job_id`, `user_id`, `filename`, `upload_date`) VALUES (NULL, ?, ?, ?, NOW())");
+                $query->bind_param("iis", $job_id, $user_id, $new_filename);
+                $query->execute();
+            } else {
+                echo "Error: Failed to move uploaded file.";
+                exit;
+            }
         }
 
+        $_SESSION['message'] = "Job" . ($hasFile ? " and description" : "") . " uploaded successfully!";
+        header("Location: /PROJECT-COLAB/?alljob=true");
+        exit;
+    } else {
+        echo "Error: Job not posted.";
+    }
 }
+
+else if (isset($_FILES['job_description_file']) && isset($_POST['user_id'])) {
+    $job_id = intval($_POST['job_id']);
+    $user_id = intval($_POST['user_id']);
+    $file = $_FILES['job_description_file'];
+
+    $filename = $file['name'];
+    $filesize = $file['size'];
+    $filetype = $file['type'];
+
+    $upload_dir = "job-description/";
+    $allowed_extensions = ['pdf', 'jpeg', 'jpg'];
+    $allowed_mime_types = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/pjpeg'];
+
+    $max_filesize = 5 * 1024 * 1024; // 5MB
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+    if (!in_array($extension, $allowed_extensions) || !in_array($filetype, $allowed_mime_types)) {
+        echo "Error: Only PDF, JPG, and JPEG files are allowed.";
+        exit;
+    }
+
+    if ($filesize > $max_filesize) {
+        echo "Error: File size exceeds the 5MB limit.";
+        exit;
+    }
+
+    $new_filename = "job_" . $job_id . "." . $extension;
+    $target_file = $upload_dir . $new_filename;
+
+    if (move_uploaded_file($file["tmp_name"], $target_file)) {
+    // Save to job-description table
+    $query = $conn1->prepare("INSERT INTO `job-description` (`id`, `job_id`, `user_id`, `filename`, `upload_date`) VALUES (NULL, ?, ?, ?, NOW())");
+    $query->bind_param("iis", $job_id, $user_id, $new_filename);
+    $query->execute();
+    } else {
+        echo "Error: Failed to move uploaded file.";
+        exit;
+    }
+    $_SESSION['message'] = "JD file uploaded successfully!";
+    header("Location: /PROJECT-COLAB/?alljob=true");
+    exit();
+}
+
+else if(isset($_GET["apply"])){
+    echo $job_id = $_GET["apply"];
+    $user_id = $_SESSION['user']['user_id'];
+
+    $check = $conn->prepare("SELECT * FROM `apply-status` WHERE job_id = ? AND user_id = ?");
+    $check->bind_param("ii", $job_id, $user_id);
+    $check->execute();
+    $res = $check->get_result();
+
+    if ($res->num_rows > 0) {
+        $_SESSION['message'] = "You’ve already applied to this job.";
+        header("Location: /PROJECT-COLAB/?alljob=true");
+        exit();
+    }
+
+    $sender_email = $_SESSION['user']['email']; //sender mail
+    $sender_name = $_SESSION['user']['username']; //user name
+
+    $query = $conn->prepare("SELECT * FROM jobs WHERE id = ?");
+    $query->bind_param("i", $job_id);
+    $query->execute();
+    $result = $query->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        $job_name = $row["title"];  //job name
+        $job_user_id = $row["user_id"];
+
+        $query1 = $conn->prepare("SELECT * FROM users WHERE id = ?");
+        $query1->bind_param("i", $job_user_id);
+        $query1->execute();
+        $result1 = $query1->get_result();
+
+        if ($result1->num_rows === 1) {
+            $row1 = $result1->fetch_assoc();
+            $reciever_email = $row1["email"]; //reciever mail
+        }
+    } else {
+        $_SESSION['message'] = "Job not available now!";
+        header("Location: /PROJECT-COLAB/?alljob=true");
+        exit();
+    }
+
+    $query3 = $conn->prepare("SELECT phone FROM users WHERE id = ?");
+    $query3->bind_param("i", $user_id);
+    $query3->execute();
+    $result3 = $query3->get_result();
+    if ($result3->num_rows === 1) {
+        $row3 = $result3->fetch_assoc();
+        $sender_phone = $row3["phone"]; //sender phone
+    }
+
+    $query2 = $conn->prepare("SELECT title, description FROM projects WHERE user_id = ?");
+    $query2->bind_param("i", $user_id);
+    $query2->execute();
+    $result2 = $query2->get_result();
+    
+    $projects = []; // To store all projects
+    
+    if ($result2->num_rows > 0) {
+        while ($row2 = $result2->fetch_assoc()) {
+            $projects[] = [
+                'title' => $row2['title'],
+                'description' => $row2['description']
+            ];
+        }
+    }    
+
+    $message = "
+    <h2>Job Application for: <strong>$job_name</strong></h2>
+
+    <p>Dear Recruiter,</p>
+
+    <p>My name is <strong>$sender_name</strong>, and I'm very interested in your job posting. 
+    I believe my skills and experience make me a great fit for this role. Please find below a list of my recent projects that showcase my capabilities and enthusiasm.</p>
+
+    <p>You can reach me at: <strong>$sender_email</strong> or <strong>$sender_phone</strong></p>
+
+    <hr>
+
+    <h3>Applicant's Projects:</h3>
+    ";
+
+    if (!empty($projects)) {
+        $message .= "<ul>";
+        foreach ($projects as $proj) {
+            $projectName = htmlspecialchars($proj['title']);
+            $projectDesc = nl2br(htmlspecialchars($proj['description']));
+            $message .= "<li><strong>$projectName</strong><br><small>$projectDesc</small></li><br>";
+        }
+        $message .= "</ul>";
+    } else {
+        $message .= "<p><em>No projects submitted yet.</em></p>";
+    }
+
+    $message .= "
+        <hr>
+        <p>Thank you for your time and consideration. I look forward to the possibility of working together.</p>
+        <p>Best regards,<br>$sender_name</p>
+
+        <hr>
+        <small>This message was automatically generated by <strong>Project Colab</strong>.</small>
+    ";
+    $subject = "New Application for $job_name from $sender_name";
+    mailsender($reciever_email, $message, $subject); 
+
+    $status = 1;
+    $applystatus = $conn->prepare("INSERT INTO `apply-status` (`id`, `job_id`, `status`, `user_id`) VALUES (NULL, ?, ?, ?)");
+    $applystatus->bind_param("iii", $job_id, $status, $user_id);
+    $statusupdate = $applystatus->execute();
+
+    if ($statusupdate) {
+        
+        $_SESSION['message'] = "You have applied successfully, Wait for response on your registered email!";
+        header("Location: /PROJECT-COLAB/?alljob=true");
+        exit();
+    }
+}
+
+else if(isset($_GET["offer"])){
+    echo $reciever_user_id = $_GET["offer"]; // reciever user id
+    $user_id = $_SESSION['user']['user_id']; // sender user id
+
+    $check = $conn->prepare("SELECT * FROM `offer-status` WHERE user_id = ? AND recruiter_id = ?");
+    $check->bind_param("ii", $reciever_user_id, $user_id);
+    $check->execute();
+    $res = $check->get_result();
+
+    if ($res->num_rows > 0) {
+        $_SESSION['message'] = "You’ve already offer this user.";
+        header("Location: /PROJECT-COLAB/?user=true");
+        exit();
+    }
+
+    $sender_email = $_SESSION['user']['email']; //sender mail
+    $sender_name = $_SESSION['user']['username']; //user name
+
+    $query1 = $conn->prepare("SELECT * FROM users WHERE id = ?");
+    $query1->bind_param("i", $reciever_user_id);
+    $query1->execute();
+    $result1 = $query1->get_result();
+
+    if ($result1->num_rows === 1) {
+        $row1 = $result1->fetch_assoc();
+        $reciever_email = $row1["email"]; //reciever mail
+    } else {
+        $_SESSION['message'] = "user not available now!";
+        header("Location: /PROJECT-COLAB/?user=true");
+        exit();
+    }
+
+    $query3 = $conn->prepare("SELECT phone FROM users WHERE id = ?");
+    $query3->bind_param("i", $user_id);
+    $query3->execute();
+    $result3 = $query3->get_result();
+    if ($result3->num_rows === 1) {
+        $row3 = $result3->fetch_assoc();
+        $sender_phone = $row3["phone"]; //sender phone
+    } 
+
+    $message = "
+    <h2>You've Received a Job Offer on <strong>Project Colab</strong></h2>
+
+    <p>Dear Candidate,</p>
+
+    <p>My name is <strong>$sender_name</strong>, and I came across your profile on Project Colab. I'm currently working on a project and would like to offer you an opportunity to collaborate.</p>
+
+    <p>If you're interested in working together, please feel free to reach out to me at <strong>$sender_email</strong> or <strong>$sender_phone</strong>. I'd be happy to discuss more details about the project and your potential role.</p>
+
+    <hr>
+
+    <p>Looking forward to hearing from you!</p>
+
+    <p>Best regards,<br>$sender_name</p>
+
+    <hr>
+    <small>This message was automatically sent via <strong>Project Colab</strong>'s job offer system.</small>
+    ";
+
+    $subject = "Job Offer from $sender_name via Project Colab";
+
+    mailsender($reciever_email, $message, $subject); 
+
+    $status = 1;
+    $offerstatus = $conn->prepare("INSERT INTO `offer-status` (`id`, `user_id`, `recruiter_id`, `status`) VALUES (NULL, ?, ?, ?)");
+    $offerstatus->bind_param("iii", $reciever_user_id, $user_id, $status);
+    $statusupdate = $offerstatus->execute();
+
+    if ($statusupdate) {
+        
+        $_SESSION['message'] = "Project Offer sent successfully, Wait for response on your registered email!";
+        header("Location: /PROJECT-COLAB/?user=true");
+        exit();
+    }
+}
+
+else if (isset($_POST['add_skill'])) {
+    $user_id = $_POST['user_id'];
+    $new_skill = trim($_POST['new_skill']);
+
+    if (!empty($new_skill)) {
+        $checkQuery = $conn->prepare("SELECT skill FROM skills WHERE user_id = ?");
+        $checkQuery->bind_param("i", $user_id);
+        $checkQuery->execute();
+        $result = $checkQuery->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $existing_skills = $row['skill'];
+            $updated_skills = $existing_skills . ', ' . $new_skill;
+
+            $update = $conn->prepare("UPDATE skills SET skill = ? WHERE user_id = ?");
+            $update->bind_param("si", $updated_skills, $user_id);
+            $update->execute();
+        } else {
+            $insert = $conn->prepare("INSERT INTO skills (user_id, skill) VALUES (?, ?)");
+            $insert->bind_param("is", $user_id, $new_skill);
+            $insert->execute();
+        }
+    }
+
+    $_SESSION['message'] = "Skill added successfully!";
+    header("Location: /PROJECT-COLAB/?profile=true");
+    exit();
+}
+
 
 else {
     //

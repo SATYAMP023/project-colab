@@ -26,16 +26,44 @@
                 <div id="info-card-content"></div>
             </div>
 
+            <div id="job-info-card" style="
+            display: none;
+            position: fixed;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: black;
+            padding: 20px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1100;
+            min-width: 300px;
+            max-width: 600px;">
+                <span id="close-job-info-card" style="float: right; cursor: pointer;">✖</span>
+                <div id="job-info-card-content"></div>
+            </div>
+
+
             <?php
             include('./common/db.php');
 
             $alljobsByUser = [];
 
-            $query = "select * from jobs";
-            $result = $conn->query($query);
+            if (isset($_GET['skill'])) {
+                $skill = trim($_GET['skill']);
+                $query = $conn->prepare("SELECT * FROM jobs WHERE LOWER(skills) LIKE CONCAT('%', LOWER(?), '%')");
+                $query->bind_param("s", $skill);
+                $query->execute();
+                $result = $query->get_result();
+            } else {
+                $result = $conn->query("SELECT * FROM jobs");
+            }
+
             foreach($result as $row)
             {
                 $name = ucfirst($row['title']);
+                $description = $row['description'];
                 $user_id = $row['user_id'];
 
                 $query = $conn->prepare("SELECT username FROM users WHERE id = ?");
@@ -73,7 +101,7 @@
 
 
 
-                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px;'>";
+                echo "<div class='row question-list' style='display: flex; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 20px;'>";
 
                     echo "<div class='col-auto'>";
                         echo "<a href='#' data-toggle='tooltip' title='User: $username'>";
@@ -82,17 +110,66 @@
                     echo "</div>";
 
                     echo "<div class='col'>";
-                        echo "<h4 class='my-questions' style='margin: 0;'> <a href='?job-id=$id'> $name </a></h4>";
+                        echo "<h4 class='my-questions' style='margin: 0;'> 
+                            <a href='javascript:void(0);' 
+                                class='job-title' 
+                                data-title='$name' 
+                                data-description=\"" . htmlspecialchars($description, ENT_QUOTES) . "\">
+                                $name
+                            </a>
+                        </h4>";
+
+                        $skills = explode(',', $row['skills']);
+                        foreach ($skills as $s) {
+                            $skillTag = trim($s);
+                            echo "<a href='?skill=" . urlencode($skillTag) . "' class='badge badge-info mr-1'>$skillTag</a>";
+                        }
+                
                     echo "</div>";
 
                     echo "<div class='col-auto ml-auto'>";
-                        echo "<a href='./server/requests.php?apply=$user_id' >Apply</a>";
+                        $jobDescQuery = $conn1->prepare("SELECT filename FROM `job-description` WHERE job_id = ? ORDER BY upload_date DESC LIMIT 1");
+                        $jobDescQuery->bind_param("i", $id);
+                        $jobDescQuery->execute();
+                        $descResult = $jobDescQuery->get_result();
+                        if ($descResult->num_rows > 0) {
+                            $descRow = $descResult->fetch_assoc();
+                            $descFile = $descRow['filename'];
+                            echo "<a href='./server/job-description/$descFile' target='_blank' class='btn btn-sm btn-outline-info' style='margin-bottom: 10px; margin-top: 20px'>View JD</a>";
+                        } else {
+                        ?>
+                            <form action="./server/requests.php" method="post" enctype="multipart/form-data" style="display: inline;">
+                                <input type="hidden" name="job_id" value="<?php echo $id; ?>">
+                                <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+    
+                                <label for="file-<?php echo $user_id; ?>" class="upload-btn">
+                                    Upload JD
+                                    <input type="file" id="file-<?php echo $user_id; ?>" name="job_description_file" onchange="this.form.submit()">
+                                </label>
+                            </form>
+                        <?php        
+                        }
+                    echo "</div>";
+
+                    echo "<div class='col-auto ml-auto'>";
+                    if ($_SESSION['user']['user_type'] == "student") {
+                        echo "<a href='./server/requests.php?apply=$id' >Apply</a>";
+                    }
                     echo "</div>";
 
                 echo "</div>";
             }
             ?>
         </div>
+
+        <div class="col-4">
+
+        <?php
+            include('skill-list.php');
+        ?>
+
+        </div>
+
     </div>
 </div>
 
@@ -137,6 +214,35 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('click', function(e) {
         if (e.target === infoCard) {
             infoCard.style.display = 'none';
+        }
+    });
+
+    const jobTitleLinks = document.querySelectorAll('.job-title');
+    const jobInfoCard = document.getElementById('job-info-card');
+    const jobInfoContent = document.getElementById('job-info-card-content');
+    const closeJobBtn = document.getElementById('close-job-info-card');
+
+    jobTitleLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            const title = this.getAttribute('data-title');
+            const description = this.getAttribute('data-description') || 'No description provided.';
+
+            jobInfoContent.innerHTML = `
+                <h4>${title}</h4>
+                <hr>
+                <p>${description}</p>
+            `;
+            jobInfoCard.style.display = 'block';
+        });
+    });
+
+    closeJobBtn.addEventListener('click', function() {
+        jobInfoCard.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === jobInfoCard) {
+            jobInfoCard.style.display = 'none';
         }
     });
 });

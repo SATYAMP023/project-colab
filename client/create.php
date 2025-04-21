@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" style="color: white;">
 <?php
 if (isset($_SESSION['message'])) {
   echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';

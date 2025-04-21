@@ -1,13 +1,12 @@
-<div class="container">
+<div class="container" style="color: white;">
 <?php
-session_start();
 if (isset($_SESSION['message'])) {
   echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
   unset($_SESSION['message']);
 }
 ?>
     <h1 class="heading">Add New Job Offers</h1>
-    <form method="POST" action="./server/requests.php">
+    <form method="POST" action="./server/requests.php" enctype="multipart/form-data">
 
   <div class="col-6 offset-sm-3 margin-bottom-15">
     <label for="title" class="form-label">Title of Job</label>
@@ -25,6 +24,11 @@ if (isset($_SESSION['message'])) {
   </div>
   
   <div class="col-6 offset-sm-3 margin-bottom-15">
+  <label for="job-description" class="form-label">Upload Job-description pdf</label>
+  <input type="file" class="form-control1" name="job-description" id="job-description">
+  </div>
+
+  <div class="col-6 offset-sm-3 margin-bottom-15">
     <label for="skills" class="form-label">Skills Required</label>
     <textarea name="skills" class="form-control" id="skills" placeholder="Skills"></textarea>
   </div>
@@ -37,7 +41,7 @@ if (isset($_SESSION['message'])) {
     ?>
   </div>
 
-  <div class="col-6 offset-sm-3">
+  <div class="col-6 offset-sm-8">
     <button type="submit" name="createjob" class="btn btn-primary">submit</button>
   </div>
 

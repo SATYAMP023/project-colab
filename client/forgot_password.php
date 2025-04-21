@@ -1,5 +1,5 @@
 <div class="container py-5">
-  <h2 class="text-center mb-4">Forgot Password</h2>
+  <h2 class="text-center mb-4" style="color: white;">Forgot Password</h2>
 
   <?php
     if (isset($_SESSION['message'])) {
@@ -8,7 +8,7 @@
     }
   ?>
 
-  <form method="POST" action="./server/requests.php" class="w-50 mx-auto" id="forgot-password">
+  <form method="POST" action="./server/requests.php" class="w-50 mx-auto" id="forgot-password" style="color: white;">
 
     <div class="mb-3">
       <label for="email" class="form-label fw-bold">User Email </label>
