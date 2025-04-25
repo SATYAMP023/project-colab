@@ -4,9 +4,9 @@
     $query = "select * from category";
     $result = $conn->query($query);
     foreach ($result as $row) {
-    $name = ucfirst($row['category']);
-    $id = $row['id'];
-    echo "<option value=$id> $name</option>";
+        $name = htmlspecialchars(ucfirst($row['category']), ENT_QUOTES, 'UTF-8');
+        $id = (int) $row['id'];
+        echo "<option value=\"$id\"> $name</option>";
     }
     ?>
 </select>

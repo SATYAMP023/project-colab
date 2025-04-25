@@ -1,7 +1,7 @@
 <div class="container" id="cont">
     <?php
     if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8') . '</div>';
         unset($_SESSION['message']);
     }
     ?>
@@ -52,6 +52,7 @@
 
             if (isset($_GET['skill'])) {
                 $skill = trim($_GET['skill']);
+                $skill = filter_var($skill, FILTER_SANITIZE_STRING);
                 $query = $conn->prepare("SELECT * FROM jobs WHERE LOWER(skills) LIKE CONCAT('%', LOWER(?), '%')");
                 $query->bind_param("s", $skill);
                 $query->execute();
@@ -62,9 +63,9 @@
 
             foreach($result as $row)
             {
-                $name = ucfirst($row['title']);
-                $description = $row['description'];
-                $user_id = $row['user_id'];
+                $name = htmlspecialchars(ucfirst($row['title']), ENT_QUOTES, 'UTF-8');
+                $description = htmlspecialchars($row['description'], ENT_QUOTES, 'UTF-8');
+                $user_id = (int) $row['user_id'];
 
                 $query = $conn->prepare("SELECT username FROM users WHERE id = ?");
                 $query->bind_param("i", $user_id);
@@ -72,7 +73,7 @@
                 $user_result = $query->get_result();
                 if ($user_result->num_rows > 0) {
                     $userdetail = $user_result->fetch_assoc();
-                    $username = $userdetail['username'];
+                    $username = htmlspecialchars($userdetail['username'], ENT_QUOTES, 'UTF-8');
                 }
 
                 $id = $row['id'];
@@ -84,7 +85,7 @@
                 $profile_result = $profile_query->get_result();
                 if ($profile_result->num_rows > 0) {
                     $image_row = $profile_result->fetch_assoc();
-                    $profile_image = "./server/profile/" . $image_row['filename'];
+                    $profile_image = "./server/profile/" . htmlspecialchars($image_row['filename'], ENT_QUOTES, 'UTF-8');
                 }
 
                 if (!isset($alljobsByUser[$user_id])) {
@@ -92,7 +93,7 @@
                     $userProjectsResult = $conn->query($userProjectsQuery);
                     $userProjects = [];
                     while($proj = $userProjectsResult->fetch_assoc()) {
-                        $userProjects[] = ucfirst($proj['title']);
+                        $userProjects[] = htmlspecialchars(ucfirst($proj['title']), ENT_QUOTES, 'UTF-8');
                     }
                     $alljobsByUser[$user_id] = $userProjects;
                 }
@@ -134,7 +135,7 @@
                         $descResult = $jobDescQuery->get_result();
                         if ($descResult->num_rows > 0) {
                             $descRow = $descResult->fetch_assoc();
-                            $descFile = $descRow['filename'];
+                            $descFile = htmlspecialchars($descRow['filename'], ENT_QUOTES, 'UTF-8');
                             echo "<a href='./server/job-description/$descFile' target='_blank' class='btn btn-sm btn-outline-info' style='margin-bottom: 10px; margin-top: 20px'>View JD</a>";
                         } else {
                         ?>

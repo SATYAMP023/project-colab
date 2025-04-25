@@ -29,7 +29,7 @@
 
         <?php
         if(isset($_SESSION['user_status']['status'])){
-          $user_type = $_SESSION['user']['user_type'];
+          $user_type = htmlspecialchars($_SESSION['user']['user_type'], ENT_QUOTES, 'UTF-8');
         ?>
           <?php
           if($user_type === "student"){
@@ -65,8 +65,8 @@
 
             <li class="nav-item">
             <?php
-              $username_parts = explode(' ', $_SESSION['user']['username']);
-              $first_name = $username_parts[0];
+              $username = htmlspecialchars($_SESSION['user']['username'], ENT_QUOTES, 'UTF-8');
+              $first_name = ucfirst(explode(' ', $username)[0]);
               ?>
               <a class="nav-link active nav-button" style="color: white;" href="./server/requests.php?logout=true">logout(<?php echo ucfirst($first_name) ?>) <sup><?php echo ucfirst($_SESSION['user']['user_type']) ?></sup></a>
             </li>
@@ -91,7 +91,7 @@
       $profile_image = "./public/profile-user.png";
       if(isset($_SESSION['user']['user_id'])){
         include('./common/db.php');
-        $user_id = $_SESSION['user']['user_id'];
+        $user_id = (int) $_SESSION['user']['user_id'];
 
         $profile_query = $conn1->prepare("SELECT filename FROM profileimage WHERE user_id = ?");
         $profile_query->bind_param("i", $user_id);
@@ -100,7 +100,8 @@
 
         if ($profile_result->num_rows > 0) {
           $image_row = $profile_result->fetch_assoc();
-          $profile_image = "./server/profile/" . $image_row['filename'];
+          $profile_filename = htmlspecialchars($image_row['filename'], ENT_QUOTES, 'UTF-8'); 
+          $profile_image = "./server/profile/" . $profile_filename;
         }
       }
     ?>

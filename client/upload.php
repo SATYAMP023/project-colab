@@ -1,8 +1,15 @@
 <?php
 
-if(isset($_SESSION['user']['user_id'])){
-    $uid = $_SESSION['user']['user_id'];
+if (isset($_SESSION['user']['user_id']) && is_numeric($_SESSION['user']['user_id'])) {
+    $uid = intval($_SESSION['user']['user_id']);
+} else {
+    $uid = null;
 }
+
+if (!isset($pid) || !is_numeric($pid)) {
+    die("Invalid project ID.");
+}
+$pid = intval($pid);
 
 $sql = "SELECT *FROM documents where project_id = $pid";
 $result = $conn1->query($sql);
@@ -10,7 +17,6 @@ $result = $conn1->query($sql);
 ?>
 
 <div class="container">
-    <div class="offset-sm-1">
         <h5>Files and Folders:</h5>
         <table class="table table-bordered table-striped">
             <thead>
@@ -64,6 +70,5 @@ $result = $conn1->query($sql);
                 }
                 ?>
             </tbody>
-        </table>    
-    </div>
+        </table>
 </div>

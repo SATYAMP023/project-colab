@@ -1,7 +1,7 @@
 <div class="container container-signup">
 <?php
 if (isset($_SESSION['message'])) {
-  echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+  echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
   unset($_SESSION['message']);
 }
 ?>
@@ -34,3 +34,22 @@ if (isset($_SESSION['message'])) {
 
   </form>
 </div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    alert('Please fill in all fields.');
+    e.preventDefault();
+    return;
+  }
+
+  if (password.length < 8) {
+    alert('Password must be at least 8 characters.');
+    e.preventDefault();
+    return;
+  }
+});
+</script>

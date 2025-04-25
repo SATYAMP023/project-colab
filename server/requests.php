@@ -43,7 +43,7 @@ if (isset($_POST["signup"])) {
     $email = $_POST["email"];
     $password = $_POST["password"];
     $c_password = $_POST["c_password"];
-    $phone = $_POST['phone'];
+    $phone = trim(preg_replace('/[^0-9]/', '', $_POST['phone']));
     $usertype = $_POST["user_type"];
 
     // Error 1: Not checking if inputs are empty before proceeding
@@ -194,8 +194,8 @@ else if(isset($_POST["login"])){
 else if(isset($_POST["create"])){
     $title = $_POST["title"];
     $description = $_POST["description"];
-    $category_id = $_POST["category"];
-    $user_id = $_SESSION["user"]["user_id"];
+    $category_id = (int) $_POST["category"];
+    $user_id = (int) $_SESSION["user"]["user_id"];
 
         $project = $conn->prepare("Insert into `projects`
         (`id`,`title`,`description`,`category_id`,`user_id`)
@@ -224,8 +224,8 @@ else if(isset($_FILES["file"]) && $_FILES["file"]["error"] == 0) {
     if (isset($_SESSION['user']['user_id'])) {
         
         $file = $_FILES['file'];
-        $pid = $_POST["project_id"];
-        $uid = $_SESSION['user']['user_id'];
+        $pid = intval($_POST["project_id"]);
+        $uid = intval($_SESSION['user']['user_id']);
         $filename = $_FILES['file']['name'];
         $filesize = $_FILES['file']['size'];
         $filetype = $_FILES['file']['type'];
@@ -264,7 +264,7 @@ else if(isset($_FILES["file"]) && $_FILES["file"]["error"] == 0) {
 }
 
 else if(isset($_GET["delete"])){
-    echo $pid = $_GET["delete"];
+    echo $pid = intval($_GET["delete"]);
     $query = $conn->prepare("delete from projects where id = $pid");
     $result = $query->execute();
     if($result){
@@ -304,7 +304,7 @@ else if(isset($_GET["deletecomment"])){
 }
 
 else if(isset($_GET["deletefile"])){
-    echo $fid = $_GET["deletefile"];
+    echo $fid = intval($_GET["deletefile"]);
     $query = $conn1->prepare("delete from documents where id = $fid");
     $result = $query->execute();
         if($result){
@@ -316,7 +316,7 @@ else if(isset($_GET["deletefile"])){
 }
 
 else if(isset($_POST["comment"])){
-    $comment = $_POST["comment"];
+    $comment = htmlspecialchars(trim($_POST["comment"]));
     $project_id = $_POST["project_id"];
     $user_id = $_SESSION["user"]["user_id"];
     echo ($comment);
@@ -382,7 +382,7 @@ else if(isset($_POST["otp-verpc"])){
         exit;
     }
 
-    $c_otp = $_POST['otp'];
+    $c_otp = trim($_POST['otp']);
     $otp = $_SESSION['user']['otp'];
     $id = $_SESSION['user']['user_id'];
     $hash_password = $_SESSION['user']['new_pass'];
@@ -631,7 +631,7 @@ else if (isset($_FILES['job_description_file']) && isset($_POST['user_id'])) {
 }
 
 else if(isset($_GET["apply"])){
-    echo $job_id = $_GET["apply"];
+    echo $job_id = intval($_GET["apply"]);
     $user_id = $_SESSION['user']['user_id'];
 
     $check = $conn->prepare("SELECT * FROM `apply-status` WHERE job_id = ? AND user_id = ?");
@@ -645,8 +645,8 @@ else if(isset($_GET["apply"])){
         exit();
     }
 
-    $sender_email = $_SESSION['user']['email']; //sender mail
-    $sender_name = $_SESSION['user']['username']; //user name
+    $sender_email = htmlspecialchars($_SESSION['user']['email']); // Sender email
+    $sender_name = htmlspecialchars($_SESSION['user']['username']); //user name
 
     $query = $conn->prepare("SELECT * FROM jobs WHERE id = ?");
     $query->bind_param("i", $job_id);
@@ -655,7 +655,7 @@ else if(isset($_GET["apply"])){
 
     if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
-        $job_name = $row["title"];  //job name
+        $job_name = htmlspecialchars($row["title"]);  //job name
         $job_user_id = $row["user_id"];
 
         $query1 = $conn->prepare("SELECT * FROM users WHERE id = ?");
@@ -665,7 +665,7 @@ else if(isset($_GET["apply"])){
 
         if ($result1->num_rows === 1) {
             $row1 = $result1->fetch_assoc();
-            $reciever_email = $row1["email"]; //reciever mail
+            $reciever_email = htmlspecialchars($row1["email"]); //reciever mail
         }
     } else {
         $_SESSION['message'] = "Job not available now!";
@@ -679,7 +679,7 @@ else if(isset($_GET["apply"])){
     $result3 = $query3->get_result();
     if ($result3->num_rows === 1) {
         $row3 = $result3->fetch_assoc();
-        $sender_phone = $row3["phone"]; //sender phone
+        $sender_phone = htmlspecialchars($row3["phone"]); //sender phone
     }
 
     $query2 = $conn->prepare("SELECT title, description FROM projects WHERE user_id = ?");
@@ -692,8 +692,8 @@ else if(isset($_GET["apply"])){
     if ($result2->num_rows > 0) {
         while ($row2 = $result2->fetch_assoc()) {
             $projects[] = [
-                'title' => $row2['title'],
-                'description' => $row2['description']
+                'title' => htmlspecialchars($row2['title']),
+                'description' => nl2br(htmlspecialchars($row2['description']))
             ];
         }
     }    
@@ -853,6 +853,71 @@ else if (isset($_POST['add_skill'])) {
 
     $_SESSION['message'] = "Skill added successfully!";
     header("Location: /PROJECT-COLAB/?profile=true");
+    exit();
+}
+
+else if (isset($_POST['upload_resume'])) {
+    $user_id = (int) $_POST['user_id'];
+    $upload_dir = 'Resume/';
+    $allowed_extensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg'];
+    $allowed_mime_types = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg'
+    ];
+    $max_filesize = 5 * 1024 * 1024; // 5MB
+
+    if (isset($_FILES['resume']) && $_FILES['resume']['error'] === 0) {
+        $file = $_FILES['resume'];
+        $filename = $file['name'];
+        $filesize = $file['size'];
+        $filetype = mime_content_type($file['tmp_name']);
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+        if (!in_array($extension, $allowed_extensions) || !in_array($filetype, $allowed_mime_types)) {
+            $_SESSION['message'] = "Only PDF, DOC, DOCX, JPG, and JPEG files are allowed.";
+        } elseif ($filesize > $max_filesize) {
+            $_SESSION['message'] = "File size exceeds the 5MB limit.";
+        } else {
+            $new_filename = "user_" . $user_id . "." . $extension;
+            $target_file = $upload_dir . $new_filename;
+
+            // Check for existing resume
+            $sql = $conn1->prepare("SELECT filename FROM resumes WHERE user_id = ?");
+            $sql->bind_param("i", $user_id);
+            $sql->execute();
+            $result = $sql->get_result();
+
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $oldfilepath = $upload_dir . $row['filename'];
+                if (file_exists($oldfilepath)) {
+                    unlink($oldfilepath);
+                }
+                $delete = $conn1->prepare("DELETE FROM resumes WHERE user_id = ?");
+                $delete->bind_param("i", $user_id);
+                $delete->execute();
+            }
+
+            // Save new file
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                $insert = $conn1->prepare("INSERT INTO resumes (user_id, filename, upload_date) VALUES (?, ?, NOW())");
+                $insert->bind_param("is", $user_id, $new_filename);
+                if ($insert->execute()) {
+                    $_SESSION['message'] = "Resume uploaded successfully!";
+                } else {
+                    $_SESSION['message'] = "Database error while saving resume.";
+                }
+            } else {
+                $_SESSION['message'] = "Failed to upload resume file.";
+            }
+        }
+    } else {
+        $_SESSION['message'] = "No file uploaded or file error.";
+    }
+
+    header("Location: /PROJECT-COLAB?profile=$user_id");
     exit();
 }
 

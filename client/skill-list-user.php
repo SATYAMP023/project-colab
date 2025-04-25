@@ -18,8 +18,9 @@
     sort($uniqueSkills);
     foreach ($uniqueSkills as $skill) {
         $encodedSkill = urlencode($skill);
+        $safeSkill = htmlspecialchars($skill, ENT_QUOTES, 'UTF-8');
         echo "<div class='row question-list' style='margin-bottom: 20px;'>
-        <h4> <a href='?userskill={$encodedSkill}' class='text-decoration-none text-light skill-filter' data-skill='$skill'>$skill</a> </h4>
+        <h4> <a href='?userskill={$encodedSkill}' class='text-decoration-none text-light skill-filter' data-skill='$safeSkill'>$safeSkill</a> </h4>
         </div>";
     }
     ?>

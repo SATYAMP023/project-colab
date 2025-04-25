@@ -1,7 +1,7 @@
 <div class="container" style="color: white;">
 <?php
 if (isset($_SESSION['message'])) {
-  echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+  echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
   unset($_SESSION['message']);
 }
 ?>
@@ -47,3 +47,19 @@ if (isset($_SESSION['message'])) {
 
   </form>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('form');
+  const fileInput = document.getElementById('job-description');
+
+  form.addEventListener('submit', function (e) {
+    const file = fileInput.files[0];
+    if (file && file.type !== 'application/pdf') {
+      e.preventDefault();
+      alert('Only PDF files are allowed.');
+    }
+  });
+});
+</script>

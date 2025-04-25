@@ -1,7 +1,7 @@
 <div class="container container-signup">
 <?php
 if (isset($_SESSION['message'])) {
-  echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+  echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8') . '</div>';
   unset($_SESSION['message']);
 }
 ?>
@@ -34,12 +34,12 @@ if (isset($_SESSION['message'])) {
       
       <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="phone" class="form-label">Enter Your Phone Number <SUp>*</SUp></label>
-        <input type="number" name="phone" class="form-control" id="phone-id" placeholder="Enter your phone number" required>
+        <input type="number" name="phone" class="form-control" id="phone-id" placeholder="Enter your phone number" required pattern="[0-9]{10}" title="Enter a valid 10-digit phone number">
       </div>
 
       <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="User Type" class="form-label">Choose Your Profession <SUp>*</SUp></label>
-        <select name="user_type" id="user_type" class="form-control">
+        <select name="user_type" id="user_type" class="form-control" required>
           <option value="student">Student</option>
           <option value="faculty">Faculty/Mentors</option>
           <option value="com-rep">Company Representative</option>
@@ -98,7 +98,7 @@ if (isset($_SESSION['message'])) {
     }
 
     function emailchecker() {
-        const emailValue = emailField.value;
+      const emailValue = emailField.value.trim();
         const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Valid email pattern
 
         if (emailValue === "") {

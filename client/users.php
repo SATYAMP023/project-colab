@@ -1,7 +1,7 @@
 <div class="container" id="cont">
     <?php
     if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8') . '</div>';
         unset($_SESSION['message']);
     }
     ?>
@@ -33,6 +33,9 @@
 
             if (isset($_GET['userskill'])) {
                 $skill = trim($_GET['userskill']);
+                if (!preg_match("/^[a-zA-Z0-9\s]+$/", $skill)) { 
+                    die("Invalid skill input.");
+                }
                 $query = $conn->prepare("
                     SELECT users.* 
                     FROM users 
@@ -51,7 +54,7 @@
             foreach($result as $row)
             {
                 $name = ucfirst($row['username']);
-                $user_id = $row['id'];
+                $user_id = intval($row['id']);
 
                 $profile_image = "./public/profile-user.png";
                 $profile_query = $conn1->prepare("SELECT filename FROM profileimage WHERE user_id = ?");
@@ -60,7 +63,7 @@
                 $profile_result = $profile_query->get_result();
                 if ($profile_result->num_rows > 0) {
                     $image_row = $profile_result->fetch_assoc();
-                    $profile_image = "./server/profile/" . $image_row['filename'];
+                    $profile_image = "./server/profile/" . htmlspecialchars($image_row['filename'], ENT_QUOTES, 'UTF-8');
                 }
 
                 if (!isset($allProjectsByUser[$user_id])) {

@@ -2,12 +2,17 @@
     <h1 class="heading">category</h1>
     <?php
     include('./common/db.php');
+
+    function sanitize($input) {
+        return htmlspecialchars(strip_tags($input));
+    }
+
     $query = "select * from category";
     $result = $conn->query($query);
     foreach($result as $row)
     {
-        $category = ucfirst($row['category']);
-        $id = $row['id'];
+        $category = sanitize(ucfirst($row['category']));
+        $id = (int) $row['id'];
 
         $query1 = $conn->prepare("SELECT * FROM projects WHERE category_id = ?");
         $query1->bind_param("i", $id);

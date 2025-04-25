@@ -7,7 +7,7 @@ include('commonfiles.php');
   <?php
   session_start();
   if (isset($_SESSION['message'])) {
-    echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+    echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
     unset($_SESSION['message']);
   }
   ?>
@@ -17,7 +17,8 @@ include('commonfiles.php');
   <div class="row">
         <div class="col-6 offset-sm-3 margin-bottom-15">
           <label for="otp" class="form-label">Enter OTP <sup>*</sup></label>
-          <input type="number" name="otp" class="form-control" id="otp-id" placeholder="Enter OTP" required>
+          <input type="number" name="otp" class="form-control" id="otp-id" placeholder="Enter OTP" maxlength="6" 
+          inputmode="numeric" required>
         </div>
       </div>
       

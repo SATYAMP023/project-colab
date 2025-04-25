@@ -10,14 +10,14 @@ if (!isset($_SESSION['user']['user_id'])) {
 
   <?php
     if (isset($_SESSION['message'])) {
-      echo '<div class="alert alert-info text-center">' . $_SESSION['message'] . '</div>';
+      echo '<div class="alert alert-info text-center">' . htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8') . '</div>';
       unset($_SESSION['message']);
     }
   ?>
 
   <form method="POST" action="./server/requests.php" class="w-50 mx-auto" id="password-change">
     <input type="hidden" name="action" value="change_password">
-    <input type="hidden" name="user_id" value="<?php echo $_SESSION['user']['user_id']; ?>">
+    <input type="hidden" name="user_id" value="<?php echo (int) $_SESSION['user']['user_id']; ?>">
     <div class="row">
       <div class="mb-3">
         <label class="form-label fw-bold">Current Password</label>
@@ -43,7 +43,7 @@ if (!isset($_SESSION['user']['user_id'])) {
     </form>
     
     <div class="text-center mt-4">
-      <a href="index.php?profile=<?php echo $_SESSION['user']['user_id']; ?>" class="btn btn-secondary">Back to Profile</a>
+      <a href="index.php?profile=<?php echo (int) $_SESSION['user']['user_id']; ?>" class="btn btn-secondary">Back to Profile</a>
     </div>
   </div>
 </div>

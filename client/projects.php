@@ -1,7 +1,7 @@
 <div class="container" id="cont">
     <?php
     if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
         unset($_SESSION['message']);
     }
     ?>
@@ -51,13 +51,15 @@
             foreach($result as $row)
             {
                 $title = ucfirst($row['title']);
-                $id = $row['id'];
+                $id = (int) $row['id'];
+                $user_id = (int) $row['user_id'];
 
-                $user_id = $row['user_id'];
-                $userQuery = "SELECT username FROM users WHERE id = $user_id";
-                $userResult = $conn->query($userQuery);
+                $userStmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
+                $userStmt->bind_param("i", $user_id);
+                $userStmt->execute();
+                $userResult = $userStmt->get_result();
                 $user = $userResult->fetch_assoc();
-                $username = $user ? $user['username'] : 'Unknown';
+                $username = $user ? htmlspecialchars($user['username']) : 'Unknown';
 
                 $profile_image = "./public/profile-user.png";
                 $profile_query = $conn1->prepare("SELECT filename FROM profileimage WHERE user_id = ?");
@@ -66,7 +68,8 @@
                 $profile_result = $profile_query->get_result();
                 if ($profile_result->num_rows > 0) {
                     $image_row = $profile_result->fetch_assoc();
-                    $profile_image = "./server/profile/" . $image_row['filename'];
+                    $filename = basename($image_row['filename']);
+                    $profile_image = "./server/profile/" . $filename;
                 }
 
                 if (!isset($allProjectsByUser[$user_id])) {

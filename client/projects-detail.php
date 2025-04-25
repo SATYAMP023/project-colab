@@ -6,17 +6,22 @@
 <div class="container">
     <?php
     if (isset($_SESSION['message'])) {
-        echo '<div class="alert alert-success" role="alert">' . $_SESSION['message'] . '</div>';
+        echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
         unset($_SESSION['message']);
     }
     ?>
     <h1 class="heading">Projects</h1>
     <div class="row">
-        <div class="col-8">
+        <div class="col-7">
             <?php
             include("./common/db.php");
-            $query = "select * from projects where id = $pid";
-            $result = $conn->query($query);
+
+            $pid = isset($_GET['p-id']) ? (int) $_GET['p-id'] : 0;
+
+            $stmt = $conn->prepare("SELECT * FROM projects WHERE id = ?");
+            $stmt->bind_param("i", $pid);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $row = $result->fetch_assoc();
             $cid = $row['category_id'];
             echo "<h3 class='margin-bottom-15 project-title'>Project: ".ucfirst($row['title'])."</h3>
@@ -30,19 +35,24 @@
                 <button type="submit" class="btn btn-primary">upload file</button>
             </form>
         </div>
+        <div class="col-1"></div>
         <div class="col-4">
             <?php
-            $categoryquery = "select category from category where id = $cid";
-            $categoryresult = $conn->query($categoryquery);
-            $categoryrow = $categoryresult->fetch_assoc();
+            $stmt = $conn->prepare("SELECT category FROM category WHERE id = ?");
+            $stmt->bind_param("i", $cid);
+            $stmt->execute();
+            $cat_result = $stmt->get_result();
+            $categoryrow = $cat_result->fetch_assoc();
             echo "<h3 class='heading2'>".ucfirst($categoryrow['category'])."</h3>";
 
-            $query = "select * from projects where category_id = $cid and id!=$pid";
-            $result = $conn->query($query);
+            $stmt = $conn->prepare("SELECT * FROM projects WHERE category_id = ? AND id != ?");
+            $stmt->bind_param("ii", $cid, $pid);
+            $stmt->execute();
+            $result = $stmt->get_result();
             foreach($result as $row)
             {
-                $title = ucfirst($row['title']);
-                $id = $row['id'];
+                $title = htmlspecialchars(ucfirst($row['title']));
+                $id = (int) $row['id'];
                 echo "<div class='row question-list'>
                 <h4> <a href='?p-id=$id'> $title </a> </h4>
                 </div>";
@@ -57,16 +67,18 @@
             <div class="offset-sm-1">
                 <h5>Comments:</h5>
                 <?php
-                $query = "select * from comments where project_id = $pid";
-                $result = $conn->query($query);
+                $stmt = $conn->prepare("SELECT * FROM comments WHERE project_id = ?");
+                $stmt->bind_param("i", $pid);
+                $stmt->execute();
+                $result = $stmt->get_result();
                 if(isset($_SESSION['user']['user_id'])){
                     $userid2 = $_SESSION['user']['user_id'];
                 }
                 if ($result->num_rows > 0) {
                     foreach($result as $row){
-                        $comment = $row['comment'];
-                        $id = $row['id'];
-                        $userid1 = $row['user_id'];
+                        $comment = nl2br(htmlspecialchars($row['comment']));
+                        $id = (int) $row['id'];
+                        $userid1 = (int) $row['user_id'];
                         
                         echo "<div class='row align-items-center mb-2'> 
                         <div class='col-8'>
@@ -99,7 +111,7 @@
         <h5>Leave your Comment here:</h5>
             <form action="./server/requests.php" method="POST">
                 <input type="hidden" name="project_id" value="<?php echo $pid ?>">
-                <textarea name="comment" class="form-control margin-bottom-15" placeholder="Your comment..."></textarea>
+                <textarea name="comment" class="form-control margin-bottom-15" placeholder="Your comment..." required maxlength="1000" pattern=".{1,1000}" title="Comment must be between 1 and 1000 characters."></textarea>
                 <button class="btn btn-primary">submit</button>
             </form>
         </div>

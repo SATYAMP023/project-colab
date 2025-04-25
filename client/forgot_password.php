@@ -3,7 +3,7 @@
 
   <?php
     if (isset($_SESSION['message'])) {
-      echo '<div class="alert alert-info text-center">' . $_SESSION['message'] . '</div>';
+      echo '<div class="alert alert-info text-center">' . htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8') . '</div>';
       unset($_SESSION['message']);
     }
   ?>
