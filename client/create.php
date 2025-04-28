@@ -26,6 +26,16 @@ if (isset($_SESSION['message'])) {
     ?>
   </div>
 
+  <div class="col-6 offset-sm-3 margin-bottom-15">
+    <label for="User Type" class="form-label">Choose Number of Members <SUp>*</SUp></label>
+    <select name="members" id="user_type" class="form-control" required>
+      <option value="0">1</option>
+      <option value="1">2</option>
+      <option value="2">3</option>
+      <option value="3">4</option>
+    </select>
+  </div>
+
   <div class="col-6 offset-sm-8">
     <button type="submit" name="create" class="btn btn-primary">submit</button>
   </div>

@@ -17,7 +17,7 @@ if (isset($_SESSION['message'])) {
       <div class="col-10 offset-sm-1 margin-bottom-15">
         <label for="password" class="form-label">Password <SUp>*</SUp></label>
         <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
-        
+    
         <div class="text-end mt-2">
           <a href="index.php?forgot-password" class="text-decoration-none">Forgot Password?</a>
         </div>

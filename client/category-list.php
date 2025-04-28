@@ -1,5 +1,6 @@
 <div>
     <h1 class="heading">category</h1>
+    <div class="frame-container">
     <?php
     include('./common/db.php');
 
@@ -25,4 +26,5 @@
         </div>";
     }
     ?>
+    </div>
 </div>
