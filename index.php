@@ -10,6 +10,9 @@ function logUserAction($conn1, $user_id, $action, $ip_address) {
 
 // Log user action (visiting pages)
 $ip_address = $_SERVER['REMOTE_ADDR'];
+if ($ip_address === '::1') {
+    $ip_address = '127.0.0.1';
+}
 $ip_address = (string)$ip_address;
 $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : null;
 
@@ -45,23 +48,25 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
 
         if(isset($_GET['signup']))
         {
-            if ($user_id) {
-                logUserAction($conn1, $user_id, "Visited signup page", $ip_address);
-            }
+            $user_id = 0;
+            logUserAction($conn1, $user_id, "Visited signup page", $ip_address);
             include('./client/signup.php');
         }
 
         elseif(isset($_GET['login']))
         {
-            if ($user_id) {
-                logUserAction($conn1, $user_id, "Visited login page", $ip_address);
-            }
+            $user_id = 0;
+            logUserAction($conn1, $user_id, "Visited login page", $ip_address);    
             include('./client/login.php');
         }
 
         else if(isset($_GET['u-id'])){
             $uid = $_GET['u-id'];
             if ($user_id) {
+                logUserAction($conn1, $user_id, "Viewed user profile with ID $uid", $ip_address);
+            }
+            else{
+                $user_id = 0;
                 logUserAction($conn1, $user_id, "Viewed user profile with ID $uid", $ip_address);
             }
             include ('./client/projects.php');
@@ -78,12 +83,20 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
             if ($user_id) {
                 logUserAction($conn1, $user_id, "Viewed latest projects", $ip_address);
             }
+            else{
+                $user_id = 0;
+                logUserAction($conn1, $user_id, "Viewed latest projects", $ip_address);
+            }
             include ('./client/projects.php');
         }
 
         else if(isset($_GET['p-id'])){
             $pid = $_GET['p-id'];
             if ($user_id) {
+                logUserAction($conn1, $user_id, "Viewed project details with ID $pid", $ip_address);
+            }
+            else{
+                $user_id = 0;
                 logUserAction($conn1, $user_id, "Viewed project details with ID $pid", $ip_address);
             }
             include ('./client/projects-detail.php');
@@ -94,12 +107,20 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
             if ($user_id) {
                 logUserAction($conn1, $user_id, "Viewed project with category ID $cid", $ip_address);
             }
+            else{
+                $user_id = 0;
+                logUserAction($conn1, $user_id, "Viewed project with category ID $cid", $ip_address);
+            }
             include ('./client/projects.php');
         }
         
         else if(isset($_GET['search'])){
             $search = $_GET['search'];
             if ($user_id) {
+                logUserAction($conn1, $user_id, "Searched for projects with keyword $search", $ip_address);
+            }
+            else{
+                $user_id = 0;
                 logUserAction($conn1, $user_id, "Searched for projects with keyword $search", $ip_address);
             }
             include ('./client/projects.php');
@@ -110,7 +131,16 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
             if ($user_id) {
                 logUserAction($conn1, $user_id, "Viewed profile with ID $user_id", $ip_address);
             }
-            include ('./client/profile.php');
+            else{
+                $user_id = 0;
+                logUserAction($conn1, $user_id, "Viewed profile with ID $user_id", $ip_address);
+            }
+            if ($user_id === 55555) {
+                //
+            }
+            else{
+                include ('./client/profile.php');
+            }
         }
         
         else if(isset($_GET['change-password'])) {
@@ -122,6 +152,10 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
         
         else if(isset($_GET['forgot-password'])) {
             if ($user_id) {
+                logUserAction($conn1, $user_id, "Visited forgot password page", $ip_address);
+            }
+            else{
+                $user_id = 0;
                 logUserAction($conn1, $user_id, "Visited forgot password page", $ip_address);
             }
             include('./client/forgot_password.php');
@@ -178,6 +212,16 @@ $user_id = isset($_SESSION['user']['user_id']) ? $_SESSION['user']['user_id'] : 
                 logUserAction($conn1, $user_id, "Viewed project group with ID $project_id", $ip_address);
             }
             include ('./client/groups.php');
+        }
+
+        else if(isset($_GET['admin-login'])) {
+            $user_id = 0;
+            logUserAction($conn1, $user_id, "Visited admin login page", $ip_address);
+            include('./client/admin-verify.php');
+        }
+
+        else if(isset($_GET['logging'])){
+            include ('./client/Loggings.php');
         }
 
         else {

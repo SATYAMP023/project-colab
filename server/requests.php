@@ -90,6 +90,9 @@ if (isset($_POST["signup"])) {
     mailsender($email, $message, $subject); 
 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $working_message = "Signup attempt initiated from IP: $ip_address,from Email: $email";
 
     $working_message = (string)$working_message;
@@ -134,6 +137,9 @@ else if (isset($_POST["otp-ver"])) {
             $_SESSION['message'] = "Registration successful.";
 
             $ip_address = $_SERVER['REMOTE_ADDR'];
+            if ($ip_address === '::1') {
+                $ip_address = '127.0.0.1';
+            }
             $ip_address = (string)$ip_address;
             $working_message = "OTP verified successfully and account created. IP: $ip_address, Email: {$stored['email']}";
             $working_message = (string)$working_message;
@@ -157,6 +163,9 @@ else if (isset($_POST["otp-ver"])) {
         if ($_SESSION['otp_attempts'] >= 3) {
 
             $ip_address = $_SERVER['REMOTE_ADDR'];
+            if ($ip_address === '::1') {
+                $ip_address = '127.0.0.1';
+            }
             $ip_address = (string)$ip_address;
             $working_message = "OTP verification failed after 3 attempts. IP: $ip_address, Email: {$stored['email']}";
             $working_message = (string)$working_message;
@@ -173,6 +182,9 @@ else if (isset($_POST["otp-ver"])) {
         } else {
 
             $ip_address = $_SERVER['REMOTE_ADDR'];
+            if ($ip_address === '::1') {
+                $ip_address = '127.0.0.1';
+            }
             $ip_address = (string)$ip_address;
             $working_message = "OTP verification failed. Attempt {$_SESSION['otp_attempts']} of 3. IP: $ip_address, Email: {$stored['email']}";
             $working_message = (string)$working_message;
@@ -200,6 +212,9 @@ else if(isset($_POST["login"])){
     $result = $stmt->get_result();
 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     
     $working_message = "Login attempt initiated from IP: $ip_address, with Email: $email";
     $working_message = (string)$working_message;
@@ -276,6 +291,9 @@ else if(isset($_POST["create"])){
         $result = $project->execute();
         if($result){
             $ip_address = $_SERVER['REMOTE_ADDR'];
+            if ($ip_address === '::1') {
+                $ip_address = '127.0.0.1';
+            }
             $log_message = "Project titled '$title' created by user $user_id from IP: $ip_address.";
             $ip_address = (string)$ip_address;
             $log_message = (string)$log_message;
@@ -296,6 +314,9 @@ else if(isset($_GET["logout"])){
 
     $user_id = $_SESSION['user']['user_id']; 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     
     $working_message = "User with ID: $user_id has logged out from IP: $ip_address";
     $working_message = (string)$working_message;  
@@ -343,6 +364,9 @@ else if(isset($_FILES["file"]) && $_FILES["file"]["error"] == 0) {
                     $_SESSION['message'] = "File uploaded successfully!";
 
                     $ip_address = $_SERVER['REMOTE_ADDR']; 
+                    if ($ip_address === '::1') {
+                        $ip_address = '127.0.0.1';
+                    }
                     $working_message = "File '$filename' uploaded to project ID: $pid by User ID: $uid from IP: $ip_address";
                     $working_message = (string)$working_message;
                     $ip_address = (string)$ip_address;
@@ -370,6 +394,9 @@ else if(isset($_GET["delete"])){
 
     $uid = $_SESSION['user']['user_id']; 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
 
     $query = $conn->prepare("delete from projects where id = $pid");
     $result = $query->execute();
@@ -394,6 +421,9 @@ else if(isset($_GET["deletecomment"])){
     $comment_id = intval($_GET["deletecomment"]);
     $uid = $_SESSION['user']['user_id']; 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
 
     $query = $conn->prepare("SELECT project_id FROM comments WHERE id = ?");
     $query->bind_param("i", $comment_id);
@@ -434,6 +464,9 @@ else if(isset($_GET["deletefile"])){
 
     $uid = $_SESSION['user']['user_id']; 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
 
     $query = $conn1->prepare("delete from documents where id = $fid");
     $result = $query->execute();
@@ -459,6 +492,9 @@ else if(isset($_POST["comment"])){
     $project_id = $_POST["project_id"];
     $user_id = $_SESSION["user"]["user_id"];
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
 
     echo ($comment);
     echo ($project_id);
@@ -496,6 +532,9 @@ else if(isset($_POST["update_password"])){
     $hash_password = password_hash($new_password, PASSWORD_DEFAULT);
 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $working_message = "User ID: $user_id is attempting to update password. From IP: $ip_address";
     $working_message = (string)$working_message;
     $ip_address = (string)$ip_address;
@@ -577,6 +616,9 @@ else if(isset($_POST["otp-verpc"])){
     $hash_password = $_SESSION['user']['new_pass'];
 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $working_message = "User ID: $id attempted OTP verification from IP: $ip_address.";
     $working_message = (string)$working_message;
     $ip_address = (string)$ip_address;
@@ -658,6 +700,9 @@ else if(isset($_POST["update_forget_password"])){
     $result = $query->get_result();
 
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $working_message = "User requested password reset for Email: $email from IP: $ip_address.";
     $working_message = (string)$working_message;
     $ip_address = (string)$ip_address;
@@ -711,6 +756,9 @@ else if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
         $filesize = $file['size'];
         $filetype = $file['type'];
         $ip_address = $_SERVER['REMOTE_ADDR'];
+        if ($ip_address === '::1') {
+            $ip_address = '127.0.0.1';
+        }
         $ip_address = (string)$ip_address;
 
         function logAction($conn1, $user_id, $ip, $action) {
@@ -800,6 +848,9 @@ else if (isset($_POST["createjob"])) {
     $upload_dir = "job-description/";
     $hasFile = isset($_FILES["job-description"]) && $_FILES["job-description"]["error"] == 0;
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logJobAction($conn1, $user_id, $ip, $action) {
@@ -888,6 +939,9 @@ else if (isset($_FILES['job_description_file']) && isset($_POST['user_id'])) {
     $max_filesize = 5 * 1024 * 1024; // 5MB
     $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logJDAction($conn1, $user_id, $ip, $action) {
@@ -937,6 +991,9 @@ else if(isset($_GET["apply"])){
     echo $job_id = intval($_GET["apply"]);
     $user_id = $_SESSION['user']['user_id'];
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logApplicationAction($conn1, $user_id, $ip, $action) {
@@ -1076,12 +1133,13 @@ else if(isset($_GET["apply"])){
     }
 }
 
-// start from here
-
 else if(isset($_GET["offer"])){
     echo $reciever_user_id = $_GET["offer"]; // reciever user id
     $user_id = $_SESSION['user']['user_id']; // sender user id
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logOfferAction($conn1, $user_id, $ip, $action) {
@@ -1177,6 +1235,9 @@ else if (isset($_POST['add_skill'])) {
     $user_id = $_POST['user_id'];
     $new_skill = trim($_POST['new_skill']);
     $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logSkillAction($conn1, $user_id, $ip, $action) {
@@ -1238,6 +1299,9 @@ else if (isset($_POST['upload_resume'])) {
     ];
     $max_filesize = 5 * 1024 * 1024; // 5MB
     $ip_address = $_SERVER['REMOTE_ADDR']; 
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logResumeAction($conn1, $user_id, $ip, $action) {
@@ -1313,6 +1377,10 @@ else if (isset($_POST['upload_resume'])) {
 else if(isset($_GET["join"])){
     echo $pid = intval($_GET["join"]);
     $user_id = intval($_SESSION['user']['user_id']);
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logJoinAction($conn1, $user_id, $ip, $action) {
@@ -1388,6 +1456,10 @@ else if (isset($_POST['send_chat'])){
     $project_id = isset($_POST['project_id']) ? (int)$_POST['project_id'] : 0;
     $message = isset($_POST['message']) ? trim($_POST['message']) : '';
     $user_id = $_SESSION['user']['user_id'];
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
     $ip_address = (string)$ip_address;
 
     function logChatAction($conn1, $user_id, $ip, $action) {
@@ -1429,6 +1501,103 @@ else if (isset($_POST['send_chat'])){
         header("Location: /PROJECT-COLAB/?project-id=$project_id");
         exit();
     }
+}
+
+else if(isset($_POST["sent"])){
+    $keyword = $_POST["keyword"];
+    
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    if ($ip_address === '::1') {
+        $ip_address = '127.0.0.1';
+    }
+    
+    $user_id = 0;
+    $working_message = "Admin Login attempt initiated from IP: $ip_address";
+    $working_message = (string)$working_message;
+    $ip_address = (string)$ip_address;
+    $temp_user_id = 0;
+    $log_stmt = $conn1->prepare("INSERT INTO `logging` (`user_id`, `ip_address`, `working`, `time`) VALUES (?, ?, ?, NOW())");
+    $log_stmt->bind_param("iss", $temp_user_id, $ip_address, $working_message);
+    $log_stmt->execute();
+    
+    if($keyword === "SatyamPrasadCuraj@123"){
+        $email = "satyamprasad710@gmail.com";
+
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $Adminusername = '';
+        $length = 8;
+        for ($i = 0; $i < $length; $i++) {
+            $Adminusername .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        
+        $Adminpassword = '';
+        $password_length = 12; // Length of the password
+        for ($i = 0; $i < $password_length; $i++) {
+            $Adminpassword .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        $_SESSION['Admin_credential'] = [
+            'username' => $Adminusername,
+            'password' => $Adminpassword,
+        ];
+
+        $message = "Your User Credential for Project-Colab Admin-Login is: Username: " . $Adminusername . " Password: " . $Adminpassword;
+        $subject = "Project Colab Admin Login Credential";
+        mailsender($email, $message, $subject);
+        header("Location: ../client/admin-verify-credential.php");
+        exit;
+    }
+    else{
+        $_SESSION['message'] = "Keyword is Incorrect Try Again";
+        header("Location: /PROJECT-COLAB/index.php?admin-login");
+        exit;
+    }
+}
+
+else if (isset($_POST["cred-ver"])) {
+
+    if (!isset($_SESSION['Admin_credential'])) {
+        $_SESSION['message'] = "Session expired. Please try again.";
+        header("Location: /PROJECT-COLAB/index.php?admin-login");
+        exit;
+    }
+
+    $username = $_POST['adminusername'];
+    $password = $_POST['adminpassword'];
+    $stored = $_SESSION['Admin_credential'];
+
+    if ($username == $stored['username'] and $password == $stored['password']) {
+
+        $_SESSION['user'] = [
+            'username' => "Admin",
+            'email' => "satyamprasad710@gmail.com",
+            'user_id' => 55555,
+            'user_type' => "Admin"
+        ];
+        $_SESSION['user_status']['status'] = '1';
+        $_SESSION['message'] = "Login successful.";
+
+        $user_id = 55555;
+        $ip_address = $_SERVER['REMOTE_ADDR'];
+        if ($ip_address === '::1') {
+            $ip_address = '127.0.0.1';
+        }
+        $ip_address = (string)$ip_address;
+        $working_message = "credential verified successfully and admin login with IP: $ip_address";
+        $working_message = (string)$working_message;
+        $log_stmt = $conn1->prepare("INSERT INTO `logging` (`user_id`, `ip_address`, `working`, `time`) VALUES (?, ?, ?, NOW())");
+        $log_stmt->bind_param("iss", $user_id, $ip_address, $working_message);
+        $log_stmt->execute();
+
+        unset($_SESSION['Admin_credential']); // Clear session
+
+        header("Location: /PROJECT-COLAB");
+        exit;
+    } else {
+        $_SESSION['message'] = "Error in Login. Try again.";
+        header("Location: /PROJECT-COLAB/index.php?admin-login");
+        exit;
+    }  
 }
 
 else {

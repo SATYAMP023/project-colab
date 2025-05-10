@@ -6,14 +6,24 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <?php
+        if(isset($_SESSION['user']['user_id'])){
+          if($_SESSION['user']['user_id'] === 55555){
+      ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?logging=true">Logging</a>
+            </li>
+        <?php
+          }
+        }
+        ?>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="./">Home</a>
+            </li>
 
-        <li class="nav-item">
-          <a class="nav-link active nav-button" style="color: white;" href="./">Home</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link active nav-button" style="color: white;" href="?latest=true">Latest-Projects</a>
-        </li>
+            <li class="nav-item">
+              <a class="nav-link active nav-button" style="color: white;" href="?latest=true">Latest-Projects</a>
+            </li>
         
         <?php
         if(!isset($_SESSION['user_status']['status'])){
@@ -90,33 +100,47 @@
     <?php
       $profile_image = "./public/profile-user.png";
       if(isset($_SESSION['user']['user_id'])){
-        include('./common/db.php');
-        $user_id = (int) $_SESSION['user']['user_id'];
-
-        $profile_query = $conn1->prepare("SELECT filename FROM profileimage WHERE user_id = ?");
-        $profile_query->bind_param("i", $user_id);
-        $profile_query->execute();
-        $profile_result = $profile_query->get_result();
-
-        if ($profile_result->num_rows > 0) {
-          $image_row = $profile_result->fetch_assoc();
-          $profile_filename = htmlspecialchars($image_row['filename'], ENT_QUOTES, 'UTF-8'); 
-          $profile_image = "./server/profile/" . $profile_filename;
+        if($_SESSION['user']['user_id'] === 55555){
+          $profile_image = "./public/profile-user.png";
+        }
+        else{
+          include('./common/db.php');
+          $user_id = (int) $_SESSION['user']['user_id'];
+          
+          $profile_query = $conn1->prepare("SELECT filename FROM profileimage WHERE user_id = ?");
+          $profile_query->bind_param("i", $user_id);
+          $profile_query->execute();
+          $profile_result = $profile_query->get_result();
+          
+          if ($profile_result->num_rows > 0) {
+            $image_row = $profile_result->fetch_assoc();
+            $profile_filename = htmlspecialchars($image_row['filename'], ENT_QUOTES, 'UTF-8'); 
+            $profile_image = "./server/profile/" . $profile_filename;
+          }
         }
       }
     ?>
-
-    <a class="navbar-brand" href="?profile=<?php 
+    <?php
     if(isset($_SESSION['user']['user_id'])){
-      echo $_SESSION['user']['user_id']; 
+      if($_SESSION['user']['user_id'] === 55555){
+        //
+      }
+      else{
+    ?>
+        <a class="navbar-brand" href="?profile=<?php 
+        if(isset($_SESSION['user']['user_id'])){
+          echo $_SESSION['user']['user_id']; 
+        }
+        else{
+          echo NULL;
+        }
+        ?>"><img src="<?php echo $profile_image; ?>" alt="" style=" width: 45px; height: 45px; border-radius: 50%; margin-left: 10px;"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <?php
+        }
     }
-    else{
-      echo NULL;
-    }
-    ?>"><img src="<?php echo $profile_image; ?>" alt="" style=" width: 45px; height: 45px; border-radius: 50%; margin-left: 10px;"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
+        ?>
   </div>
 </nav>
